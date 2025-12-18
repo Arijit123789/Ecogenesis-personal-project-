@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoGenesis | The Lost World</title>
+    <link rel="icon" href="https://fav.farm/🐆" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;800&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --neon-gold: #ffb700; --deep-space: #020202; }
+        body { background: var(--deep-space); color: white; font-family: 'SF Pro Display', sans-serif; overflow-x: hidden; }
+        .text-gold { color: var(--neon-gold); text-shadow: 0 0 20px rgba(255, 183, 0, 0.3); }
+        .glass-panel { background: rgba(20, 20, 20, 0.4); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; }
+        header { position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(2,2,2,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .parallax-img { transition: transform 0.5s ease-out; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold flex items-center gap-2 text-white hover:text-green-400 transition">
+                <span>🌍</span> EcoGenesis
+            </a>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-400">
+                <a href="/" class="hover:text-white transition">Home</a>
+                <a href="/wildlife" class="text-white">Legacy</a>
+                <a href="/guide" class="hover:text-white transition">Planting Guide</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="h-screen flex items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <img src="https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?q=80&w=2572&auto=format&fit=crop" class="w-full h-full object-cover opacity-40">
+                <div class="absolute inset-0 bg-gradient-to-t from-[#020202] via-transparent to-[#020202]"></div>
+            </div>
+            <div class="z-10 text-center max-w-4xl px-4">
+                <h1 class="text-6xl md:text-9xl font-bold mb-6 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-600">
+                    The Silent <br> Vanishing.
+                </h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto">We are the first generation to feel the impact of climate change and the last generation that can do something about it.</p>
+            </div>
+        </section>
+
+        <section class="py-20 px-6">
+            <div class="container mx-auto">
+                <div class="mb-16">
+                    <span class="text-gold font-mono tracking-[0.3em] text-sm">CRITICAL STATUS</span>
+                    <h2 class="text-5xl font-bold mt-2">Species on the Brink</h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="glass-panel p-4 group cursor-pointer hover:bg-white/5 transition duration-500">
+                        <div class="h-80 overflow-hidden rounded-xl mb-6 relative">
+                            <img src="https://images.unsplash.com/photo-1549480017-d76466a4b7e8?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700">
+                            <div class="absolute top-4 right-4 bg-red-500/80 backdrop-blur px-3 py-1 rounded text-xs font-bold">CRITICALLY ENDANGERED</div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Sumatran Tiger</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Less than 400 remain. Deforestation for palm oil plantations has decimated their habitat in Indonesia.</p>
+                    </div>
+
+                    <div class="glass-panel p-4 group cursor-pointer hover:bg-white/5 transition duration-500">
+                        <div class="h-80 overflow-hidden rounded-xl mb-6 relative">
+                            <img src="https://images.unsplash.com/photo-1550993510-4740e793933c?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700">
+                            <div class="absolute top-4 right-4 bg-red-500/80 backdrop-blur px-3 py-1 rounded text-xs font-bold">VULNERABLE</div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Giant Panda</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">A symbol of conservation. Their bamboo forests are shrinking due to rapid urbanization and climate shifts.</p>
+                    </div>
+
+                    <div class="glass-panel p-4 group cursor-pointer hover:bg-white/5 transition duration-500">
+                        <div class="h-80 overflow-hidden rounded-xl mb-6 relative">
+                            <img src="https://images.unsplash.com/photo-1629814595287-c33144a9937d?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700">
+                            <div class="absolute top-4 right-4 bg-orange-500/80 backdrop-blur px-3 py-1 rounded text-xs font-bold">ENDANGERED</div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">Asian Elephant</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Roaming forests for centuries, they now face conflict with humans as their ancient corridors are destroyed.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-32 flex flex-col items-center justify-center text-center bg-[#050505]">
+            <h2 class="text-4xl md:text-7xl font-bold mb-8">They need a home. <br> You can build it.</h2>
+            <a href="/guide" class="px-10 py-4 bg-white text-black rounded-full font-bold text-lg hover:scale-105 transition duration-300">
+                Learn How to Plant
+            </a>
+        </section>
+
+    </main>
+
+    <script>
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+        
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from(".glass-panel", {
+            y: 100, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out",
+            scrollTrigger: { trigger: ".grid", start: "top 80%" }
+        });
+    </script>
+</body>
+</html>
