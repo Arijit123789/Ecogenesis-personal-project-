@@ -8,7 +8,6 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.11.1/ethers.umd.min.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
@@ -17,78 +16,25 @@
     <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;800&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --neon-green: #00ff88;
-            --deep-space: #020202;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-bg: rgba(20, 20, 20, 0.4);
-        }
-
-        body {
-            background-color: var(--deep-space);
-            color: #ffffff;
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
-            overflow-x: hidden;
-            margin: 0;
-        }
-
-        /* Sticky Header */
-        header {
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
-            background: rgba(2, 2, 2, 0.8); backdrop-filter: blur(25px);
-            border-bottom: 1px solid var(--glass-border);
-        }
-
-        /* Text & Glass */
+        :root { --neon-green: #00ff88; --deep-space: #020202; --glass-border: rgba(255, 255, 255, 0.08); }
+        body { background-color: var(--deep-space); color: #ffffff; font-family: 'SF Pro Display', sans-serif; overflow-x: hidden; }
+        
+        header { position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(2, 2, 2, 0.8); backdrop-filter: blur(25px); border-bottom: 1px solid var(--glass-border); }
         .text-neon { color: var(--neon-green); text-shadow: 0 0 25px rgba(0, 255, 136, 0.4); }
-        .glass-panel {
-            background: var(--glass-bg); backdrop-filter: blur(40px);
-            border: 1px solid var(--glass-border); border-radius: 24px;
-        }
-
-        /* Marquee */
-        .marquee-container {
-            overflow: hidden; white-space: nowrap; background: rgba(255, 75, 75, 0.1);
-            border-y: 1px solid rgba(255, 75, 75, 0.2);
-        }
-        .marquee-content { display: inline-block; animation: marquee 30s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-        /* Scanner Zone */
-        .scanner-zone {
-            border: 2px dashed rgba(255, 255, 255, 0.15);
-            background: radial-gradient(circle at center, rgba(0, 255, 136, 0.02) 0%, transparent 70%);
-            transition: all 0.3s; overflow: hidden; position: relative;
-        }
+        
+        .glass-panel { background: rgba(20, 20, 20, 0.4); backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 24px; }
+        
+        /* Scanner */
+        .scanner-zone { border: 2px dashed rgba(255, 255, 255, 0.15); background: radial-gradient(circle at center, rgba(0, 255, 136, 0.02) 0%, transparent 70%); overflow: hidden; position: relative; transition: 0.3s; }
         .scanner-zone:hover { border-color: var(--neon-green); background: radial-gradient(circle at center, rgba(0, 255, 136, 0.08) 0%, transparent 60%); }
-        .scan-line {
-            position: absolute; width: 100%; height: 2px; background: var(--neon-green);
-            box-shadow: 0 0 15px var(--neon-green); top: 0; opacity: 0;
-        }
+        .scan-line { position: absolute; width: 100%; height: 2px; background: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); top: 0; opacity: 0; }
         .scanner-zone:hover .scan-line { opacity: 1; animation: scan 1.5s linear infinite; }
         @keyframes scan { 0% {top: 0;} 100% {top: 100%;} }
 
-        /* Buttons */
-        .btn-glow {
-            background: #fff; color: #000; padding: 14px 40px; border-radius: 100px;
-            font-weight: 600; transition: all 0.3s;
-        }
-        .btn-glow:hover { box-shadow: 0 0 40px rgba(255,255,255,0.3); transform: scale(1.02); }
-        .btn-disconnect {
-            background: rgba(255, 75, 75, 0.1); color: #ff6b6b; border: 1px solid rgba(255, 75, 75, 0.3);
-            font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; margin-left: 10px; display: none;
-        }
-        .btn-disconnect:hover { background: rgba(255, 75, 75, 0.2); }
-
-        /* Animations */
         .feed-item { animation: slideIn 0.5s ease-out; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Globe */
-        #globe-viz { width: 100%; height: 600px; }
         
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        #globe-viz { width: 100%; height: 600px; }
     </style>
 </head>
 <body>
@@ -100,17 +46,15 @@
                 <span class="text-white">Eco<span class="text-neon">Genesis</span></span>
             </div>
             <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-400">
-    <a href="#mission" class="hover:text-white transition">Mission</a>
-    <a href="/wildlife" class="hover:text-white transition">Legacy</a> <a href="/guide" class="hover:text-white transition">Guide</a>   <a href="#upload" class="hover:text-white transition text-neon">Plant Now</a>
-    <a href="#donate" class="hover:text-white transition">Donate</a>
-</nav>
-            <div class="flex items-center">
-                <button id="header-connect-btn" class="border border-white/20 text-white hover:border-green-400 hover:text-green-400 px-5 py-2 rounded-full transition text-sm flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-gray-500" id="wallet-status-dot"></span>
-                    <span id="wallet-btn-text">Connect Wallet</span>
-                </button>
-                <button id="disconnect-btn" class="btn-disconnect">Disconnect</button>
-            </div>
+                <a href="#mission" class="hover:text-white transition">Mission</a>
+                <a href="/wildlife" class="hover:text-white transition">Legacy</a>
+                <a href="/guide" class="hover:text-white transition">Guide</a>
+                <a href="#map-section" class="hover:text-white transition text-neon">Live Map</a>
+                <a href="#upload" class="hover:text-white transition">Plant</a>
+            </nav>
+            <button id="header-connect-btn" class="border border-white/20 text-white hover:border-green-400 hover:text-green-400 px-5 py-2 rounded-full transition text-sm">
+                Connect Wallet
+            </button>
         </div>
     </header>
 
@@ -121,122 +65,45 @@
                 <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#020202]/50 to-[#020202]"></div>
             </div>
             <div class="z-10 text-center max-w-5xl px-4 mt-10">
-                <div class="hero-text opacity-0 translate-y-10">
-                    <span class="text-neon text-sm font-mono tracking-[0.3em] uppercase mb-4 block">System Failure Imminent</span>
-                </div>
-                <h1 class="text-7xl md:text-9xl font-bold mb-6 tracking-tighter leading-tight hero-text opacity-0 translate-y-10">
+                <h1 class="text-7xl md:text-9xl font-bold mb-6 tracking-tighter hero-text opacity-0 translate-y-10">
                     Heal the <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">Broken World.</span>
                 </h1>
-                <div class="hero-text opacity-0 translate-y-10">
-                    <button onclick="document.getElementById('mission').scrollIntoView({behavior:'smooth'})" class="btn-glow">
-                        Initiate Repair
-                    </button>
-                </div>
+                <button onclick="document.getElementById('mission').scrollIntoView({behavior:'smooth'})" class="bg-white text-black px-10 py-4 rounded-full font-bold text-xl hover:scale-105 transition hero-text opacity-0 translate-y-10">
+                    Initiate Repair
+                </button>
             </div>
         </section>
-
-        <div class="marquee-container py-3">
-            <div class="marquee-content text-sm font-mono text-red-300">
-                ⚠️ GLOBAL ALERT: AQI LEVELS CRITICAL IN 40+ CITIES &nbsp;&nbsp;///&nbsp;&nbsp; CO2 PPM EXCEEDS 420 &nbsp;&nbsp;///&nbsp;&nbsp; 150 SPECIES LOST DAILY &nbsp;&nbsp;///&nbsp;&nbsp; WE NEED CLEAN AIR &nbsp;&nbsp;///&nbsp;&nbsp; ACT NOW OR LOSE FOREVER &nbsp;&nbsp;///&nbsp;&nbsp; 
-                ⚠️ GLOBAL ALERT: AQI LEVELS CRITICAL IN 40+ CITIES &nbsp;&nbsp;///&nbsp;&nbsp; CO2 PPM EXCEEDS 420 &nbsp;&nbsp;///&nbsp;&nbsp; 150 SPECIES LOST DAILY &nbsp;&nbsp;///&nbsp;&nbsp; WE NEED CLEAN AIR &nbsp;&nbsp;///&nbsp;&nbsp; ACT NOW OR LOSE FOREVER &nbsp;&nbsp;///&nbsp;&nbsp; 
-            </div>
-        </div>
 
         <section id="mission" class="py-24 relative z-10">
-            <div class="container mx-auto px-6 max-w-5xl">
-                <div class="text-center mb-16">
-                    <span class="text-neon font-mono text-sm tracking-[0.3em] uppercase">The Objective</span>
-                    <h2 class="text-4xl md:text-6xl font-bold mt-4 mb-6">Heal the Planet. <br>One Block at a Time.</h2>
-                    <p class="text-xl text-gray-400 leading-relaxed max-w-3xl mx-auto">
-                        We are facing a planetary emergency. Deforestation disrupts the global carbon cycle, accelerating climate collapse. 
-                        <span class="text-white">EcoGenesis</span> is the counter-measure. A decentralized protocol designed to financially incentivize the restoration of Earth's biosphere.
-                    </p>
-                </div>
-                
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="glass-panel p-8 text-center hover:bg-white/5 transition">
-                        <div class="text-4xl mb-4">🌪️</div>
-                        <h3 class="text-xl font-bold mb-2">Combat Crisis</h3>
-                        <p class="text-sm text-gray-500">Reversing extreme weather and rising CO2 levels through aggressive reforestation.</p>
-                    </div>
-                    <div class="glass-panel p-8 text-center hover:bg-white/5 transition">
-                        <div class="text-4xl mb-4">🛡️</div>
-                        <h3 class="text-xl font-bold mb-2">Verify Action</h3>
-                        <p class="text-sm text-gray-500">Using Gemini AI Vision to distinguish real biological restoration from fake data.</p>
-                    </div>
-                    <div class="glass-panel p-8 text-center hover:bg-white/5 transition">
-                        <div class="text-4xl mb-4">⛓️</div>
-                        <h3 class="text-xl font-bold mb-2">Eternal Proof</h3>
-                        <p class="text-sm text-gray-500">Every tree planted is recorded on the Ethereum blockchain forever.</p>
-                    </div>
-                </div>
+            <div class="container mx-auto px-6 max-w-4xl text-center">
+                <h2 class="text-5xl font-bold mb-6">The Objective</h2>
+                <p class="text-xl text-gray-400 leading-relaxed">
+                    We are facing a planetary emergency. <span class="text-white">EcoGenesis</span> is the counter-measure. A decentralized protocol designed to financially incentivize the restoration of Earth's biosphere.
+                </p>
             </div>
         </section>
 
-        <section id="about" class="py-24 bg-[#030305] border-t border-white/5 relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-1/2 h-full bg-green-500/5 blur-[100px] pointer-events-none"></div>
-            
-            <div class="container mx-auto px-6 max-w-6xl grid md:grid-cols-2 gap-16 items-center relative z-10">
-                <div>
-                    <span class="text-neon font-mono text-sm tracking-[0.3em] uppercase mb-2 block">System Architecture</span>
-                    <h2 class="text-4xl md:text-5xl font-bold mb-6">DePIN for Nature.</h2>
-                    <div class="space-y-6 text-gray-400 text-lg">
-                        <p>
-                            EcoGenesis isn't just a website; it's a **Decentralized Physical Infrastructure Network (DePIN)**. We bridge the gap between digital value (ETH) and physical reality (Trees).
-                        </p>
-                        <p>
-                            Built by <strong class="text-white">Arijit Bhaya</strong>, this protocol removes the middleman from charity. Donations go directly to the Smart Contract, and the Smart Contract pays verified planters automatically. No bureaucracy. Just code and chlorophyll.
-                        </p>
-                        <div class="flex gap-4 mt-8">
-                            <div class="flex flex-col">
-                                <span class="text-3xl font-bold text-white">100%</span>
-                                <span class="text-xs text-gray-500 uppercase tracking-wider">Transparent</span>
-                            </div>
-                            <div class="w-px h-12 bg-white/10"></div>
-                            <div class="flex flex-col">
-                                <span class="text-3xl font-bold text-white">0s</span>
-                                <span class="text-xs text-gray-500 uppercase tracking-wider">Settlement</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="glass-panel p-2 transform rotate-2 hover:rotate-0 transition duration-500">
-                    <img src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?q=80&w=1000&auto=format&fit=crop" class="rounded-xl w-full h-auto opacity-80 hover:opacity-100 transition">
-                </div>
-            </div>
-        </section>
-
-        <section id="map-section" class="py-20 bg-[#020202] relative overflow-hidden border-t border-white/5">
+        <section id="map-section" class="py-20 bg-[#020202] relative border-t border-white/5">
             <div class="container mx-auto px-6 relative z-10">
                 <div class="grid lg:grid-cols-2 gap-12 items-center">
-                    
                     <div>
                         <p class="text-neon font-mono text-sm tracking-[0.3em] mb-4">LIVE ACTIVITY FEED</p>
-                        <h2 class="text-5xl font-bold mb-6">Global Reforestation Tracker</h2>
-                        
-                        <div class="text-[5rem] font-bold leading-none text-white tabular-nums tracking-tighter mb-4" id="tree-counter">
-                            1428
-                        </div>
+                        <h2 class="text-5xl font-bold mb-6">Global Neural Network</h2>
+                        <div class="text-[5rem] font-bold leading-none text-white tabular-nums tracking-tighter mb-4" id="tree-counter">1428</div>
                         <p class="text-xl text-gray-500 mb-8">Verified Regenerations on Chain</p>
                         
                         <div class="glass-panel p-6 max-w-sm h-64 overflow-hidden relative">
                             <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-                                    <span class="font-mono text-xs text-green-400 tracking-wider">BLOCKCHAIN LIVE FEED</span>
-                                </div>
+                                <span class="font-mono text-xs text-green-400 tracking-wider">BLOCKCHAIN LIVE FEED</span>
                                 <span class="text-xs text-gray-500">SEPOLIA</span>
                             </div>
                             <div class="space-y-4" id="tx-feed"></div>
                             <div class="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-[#141414] to-transparent pointer-events-none"></div>
                         </div>
                     </div>
-
                     <div class="h-[600px] w-full relative" id="globe-container">
                         <div id="globe-viz" class="absolute inset-0"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#020202] via-transparent to-transparent pointer-events-none"></div>
                     </div>
-
                 </div>
             </div>
         </section>
@@ -245,7 +112,6 @@
             <div class="glass-panel w-full max-w-2xl p-10 relative">
                 <h2 class="text-4xl font-bold mb-2">Submit Proof of Work</h2>
                 <p class="text-gray-400 mb-8">Upload evidence. AI Agent verifies authenticity.</p>
-
                 <div id="drop-area" class="scanner-zone rounded-2xl h-80 flex flex-col items-center justify-center cursor-pointer mb-8 group">
                     <input type="file" id="file-input" class="hidden" accept="image/*">
                     <div class="scan-line"></div>
@@ -253,105 +119,64 @@
                         <div class="w-16 h-16 rounded-full border border-gray-600 flex items-center justify-center mx-auto mb-4 group-hover:border-green-400 transition text-2xl">📸</div>
                         <p class="text-lg font-medium text-white">Initialize Scan</p>
                     </div>
-                    <div id="preview-container" class="absolute inset-0 bg-black hidden flex-col items-center justify-center z-20">
-                        <img id="image-preview" class="h-full w-full object-cover opacity-60">
-                        <div class="absolute bottom-4 bg-black/80 px-4 py-2 rounded-full text-xs font-mono text-neon border border-green-500/30">IMAGE ACQUIRED</div>
-                    </div>
+                    <img id="image-preview" class="absolute inset-0 w-full h-full object-cover hidden">
                 </div>
-
                 <div id="status-msg" class="font-mono text-sm text-center min-h-[24px] mb-6 text-gray-500">Awaiting Input...</div>
-                <button id="action-btn" class="w-full btn-glow opacity-50 cursor-not-allowed" disabled>Verify & Mint Reward</button>
+                <button id="action-btn" class="w-full bg-white text-black font-bold py-4 rounded-full opacity-50 cursor-not-allowed" disabled>Verify & Mint Reward</button>
             </div>
         </section>
 
         <section id="donate" class="py-24 bg-[#020202] border-t border-white/5">
             <div class="container mx-auto px-6 max-w-4xl text-center">
-                <span class="text-neon font-mono text-sm tracking-[0.3em] mb-4 block">SUSTAIN THE PROTOCOL</span>
                 <h2 class="text-4xl md:text-6xl font-bold mb-6">Fund the Regeneration.</h2>
-                <p class="text-gray-400 mb-10 text-lg max-w-2xl mx-auto">
-                    Directly top up the Reward Pool. 100% of funds go to verified planters. This project is fueled by NGOs and global citizens like you.
-                </p>
-                
                 <div class="glass-panel p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group">
-                    <div class="absolute -left-20 top-0 w-40 h-full bg-green-500/10 blur-2xl group-hover:bg-green-500/20 transition"></div>
                     <div class="text-left z-10">
                         <p class="text-xs text-gray-500 font-mono uppercase mb-1">Contract Address (Sepolia)</p>
                         <p class="text-xl md:text-2xl font-mono text-white break-all" id="contract-address">0xc329a783119e8b4219098c96493eb6783009601e</p>
                     </div>
-                    <button onclick="copyAddress()" class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition z-10 border border-white/10 shrink-0">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    <button onclick="navigator.clipboard.writeText(document.getElementById('contract-address').innerText); alert('Copied!');" class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg border border-white/10 shrink-0">
                         Copy Address
                     </button>
                 </div>
             </div>
         </section>
-
     </main>
 
-    <footer class="py-20 border-t border-white/5 bg-black text-center md:text-left">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-            <div>
-                <div class="text-2xl font-bold mb-2 flex items-center gap-2 justify-center md:justify-start">🌍 EcoGenesis</div>
-                <p class="text-gray-600 text-sm">DePIN for Nature.</p>
-            </div>
-            <div class="text-right">
-                <p class="text-gray-500 text-sm mb-2">Engineered by <span class="text-white font-semibold">Arijit Bhaya</span></p>
-                <div class="flex gap-6 justify-center md:justify-end text-sm font-medium">
-                    <a href="https://www.linkedin.com/in/arijitbhaya" target="_blank" class="text-gray-400 hover:text-white transition">LinkedIn</a>
-                    <a href="https://github.com/Arijit123789" target="_blank" class="text-gray-400 hover:text-white transition">GitHub</a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
     <script>
-        const CONTRACT_ADDRESS = "0xc329a783119e8b4219098c96493eb6783009601e";
-        const BACKEND_URL = "/verify-planting";
-        const CONTRACT_ABI = ["function claimReward(bytes memory signature) external"];
-
-        // --- 1. 3D GLOBE ---
+        // --- GLOBE CONFIGURATION (The One You Like) ---
         const globeContainer = document.getElementById('globe-viz');
-        const N = 40;
-        const gData = [...Array(N).keys()].map(() => ({
-            lat: (Math.random() - 0.5) * 180,
-            lng: (Math.random() - 0.5) * 360,
-            size: Math.random() / 3,
-            color: '#00ff88'
+        const arcsData = [...Array(20).keys()].map(() => ({
+            startLat: (Math.random() - 0.5) * 180,
+            startLng: (Math.random() - 0.5) * 360,
+            endLat: (Math.random() - 0.5) * 180,
+            endLng: (Math.random() - 0.5) * 360,
+            color: [['#00ff88', '#00ccff'][Math.round(Math.random())]]
         }));
 
         const world = Globe()
-            .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+            .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+            .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
             .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
-            .pointsData(gData)
-            .pointAltitude('size')
-            .pointColor('color')
-            .pointRadius(0.5)
-            .pointsMerge(true) 
-            .atmosphereColor('#00ff88')
-            .atmosphereAltitude(0.15)
+            .arcsData(arcsData)
+            .arcColor('color')
+            .arcDashLength(0.4)
+            .arcDashGap(2)
+            .arcDashAnimateTime(4000)
+            .atmosphereColor('#00ccff')
+            .atmosphereAltitude(0.2)
             (globeContainer);
 
         world.controls().autoRotate = true;
-        world.controls().autoRotateSpeed = 0.6;
+        world.controls().autoRotateSpeed = 0.5;
+        world.controls().enableZoom = false;
 
-        // --- 2. LIVE SIMULATION (Counter + Feed + Globe) ---
+        // --- LIVE FEED LOGIC ---
         let baseCount = 1428;
         const counterEl = document.getElementById("tree-counter");
         const feedContainer = document.getElementById('tx-feed');
-        const locations = ["Brazil", "India", "Norway", "Kenya", "USA", "Indonesia", "Peru", "Canada"];
+        const locations = ["Brazil", "India", "Norway", "Kenya", "USA"];
 
         function simulateActivity() {
-            // 1. Add Point to Globe
-            const newPoint = {
-                lat: (Math.random() - 0.5) * 180,
-                lng: (Math.random() - 0.5) * 360,
-                size: Math.random(),
-                color: '#ffffff'
-            };
-            const currentData = world.pointsData();
-            world.pointsData([...currentData, newPoint]);
-
-            // 2. Add to Live Feed
             const randomAddr = "0x" + Math.random().toString(16).substr(2, 4) + "..." + Math.random().toString(16).substr(2, 4);
             const randomLoc = locations[Math.floor(Math.random() * locations.length)];
             
@@ -359,110 +184,62 @@
             div.className = "flex justify-between items-center feed-item border-b border-white/5 pb-2";
             div.innerHTML = `
                 <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[10px]">👤</div>
-                    <div>
-                        <div class="text-sm font-mono text-white">${randomAddr}</div>
-                        <div class="text-xs text-gray-500">Minted Reward</div>
-                    </div>
+                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <div><div class="text-sm font-mono text-white">${randomAddr}</div></div>
                 </div>
-                <div class="text-right">
-                    <div class="text-neon text-sm font-bold">+0.01 ETH</div>
-                    <div class="text-xs text-gray-500">${randomLoc}</div>
-                </div>
+                <div class="text-right"><div class="text-neon text-sm font-bold">+0.01 ETH</div><div class="text-xs text-gray-500">${randomLoc}</div></div>
             `;
             feedContainer.prepend(div);
             if (feedContainer.children.length > 4) feedContainer.lastElementChild.remove();
-
-            // 3. Increment Counter
+            
             baseCount++;
-            counterEl.innerText = baseCount; // Immediate update
+            counterEl.innerText = baseCount;
         }
+        setInterval(simulateActivity, 3000);
 
-        // Run simulation every 3.5 seconds
-        setInterval(simulateActivity, 3500);
-        simulateActivity(); // Run once immediately
-
-        // --- 3. ANIMATIONS ---
-        const lenis = new Lenis();
-        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-        requestAnimationFrame(raf);
-        gsap.registerPlugin(ScrollTrigger);
-
-        gsap.to("#hero-bg", { scrollTrigger: { trigger: "header", start: "top top", end: "bottom top", scrub: true }, scale: 1.2, opacity: 0.2 });
-        gsap.to(".hero-text", { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power3.out", delay: 0.2 });
-
-        function copyAddress() {
-            navigator.clipboard.writeText(document.getElementById('contract-address').innerText);
-            alert("Address Copied!");
-        }
-
-        // --- 4. WALLET & UPLOAD ---
+        // --- WALLET & UPLOAD ---
+        const CONTRACT_ADDRESS = "0xc329a783119e8b4219098c96493eb6783009601e";
+        const BACKEND_URL = "/verify-planting";
+        const CONTRACT_ABI = ["function claimReward(bytes memory signature) external"];
         let provider, signer, userAddress;
-        const walletBtn = document.getElementById('header-connect-btn');
-        const disconnectBtn = document.getElementById('disconnect-btn');
-        const walletText = document.getElementById('wallet-btn-text');
-        const walletDot = document.getElementById('wallet-status-dot');
 
+        const walletBtn = document.getElementById('header-connect-btn');
         async function connectWallet() {
             if (!window.ethereum) return alert("MetaMask not detected.");
-            try {
-                provider = new ethers.BrowserProvider(window.ethereum);
-                await provider.send("eth_requestAccounts", []);
-                signer = await provider.getSigner();
-                userAddress = await signer.getAddress();
-                const network = await provider.getNetwork();
-                if (network.chainId !== 11155111n) {
-                    try { await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0xaa36a7" }] }); } catch { alert("Switch to Sepolia Testnet."); return; }
-                    provider = new ethers.BrowserProvider(window.ethereum);
-                }
-                updateWalletUI(true);
-            } catch (e) { console.error(e); }
+            provider = new ethers.BrowserProvider(window.ethereum);
+            await provider.send("eth_requestAccounts", []);
+            signer = await provider.getSigner();
+            userAddress = await signer.getAddress();
+            walletBtn.innerText = userAddress.slice(0,6) + "..." + userAddress.slice(-4);
+            walletBtn.classList.add("border-green-500", "text-green-400");
         }
-
-        function disconnectWallet() { userAddress = null; signer = null; updateWalletUI(false); }
-        function updateWalletUI(isConnected) {
-            if (isConnected) {
-                walletText.innerText = userAddress.slice(0,6) + "..." + userAddress.slice(-4);
-                walletDot.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#00ff88]";
-                walletBtn.classList.replace("border-white/20", "border-green-500/50");
-                walletBtn.classList.replace("text-white", "text-green-400");
-                disconnectBtn.style.display = "block";
-            } else {
-                walletText.innerText = "Connect Wallet";
-                walletDot.className = "w-2 h-2 rounded-full bg-gray-500";
-                walletBtn.classList.replace("border-green-500/50", "border-white/20");
-                walletBtn.classList.replace("text-green-400", "text-white");
-                disconnectBtn.style.display = "none";
-            }
-        }
-        walletBtn.addEventListener('click', () => { if(!userAddress) connectWallet(); });
-        disconnectBtn.addEventListener('click', disconnectWallet);
+        walletBtn.onclick = connectWallet;
 
         const fileInput = document.getElementById('file-input');
         const actionBtn = document.getElementById('action-btn');
         const statusMsg = document.getElementById('status-msg');
         let selectedFile;
 
-        document.getElementById('drop-area').addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => {
+        document.getElementById('drop-area').onclick = () => fileInput.click();
+        fileInput.onchange = (e) => {
             selectedFile = e.target.files[0];
             if (selectedFile) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     document.getElementById('image-preview').src = e.target.result;
-                    document.getElementById('preview-container').classList.remove('hidden');
-                    document.getElementById('preview-container').classList.add('flex');
+                    document.getElementById('image-preview').classList.remove('hidden');
+                    document.getElementById('upload-placeholder').classList.add('opacity-0');
                     actionBtn.disabled = false;
                     actionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                 };
                 reader.readAsDataURL(selectedFile);
             }
-        });
+        };
 
-        actionBtn.addEventListener('click', async () => {
+        actionBtn.onclick = async () => {
             if (!userAddress) { await connectWallet(); if(!userAddress) return; }
             actionBtn.disabled = true;
-            actionBtn.innerHTML = `<span class="animate-pulse">Analyzing Biological Data...</span>`;
+            actionBtn.innerText = "Analyzing...";
             statusMsg.innerText = "Interfacing with Gemini AI...";
             statusMsg.className = "font-mono text-sm text-center mb-6 text-yellow-400";
 
@@ -475,37 +252,32 @@
                 const data = await res.json();
                 if (!data.success) throw new Error(data.message);
 
-                statusMsg.innerText = "Tree Identified! Confirming...";
+                statusMsg.innerText = "Tree Identified! Signing...";
                 statusMsg.className = "font-mono text-sm text-center mb-6 text-green-400";
-                actionBtn.innerText = "Sign Transaction";
-
+                
                 const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
                 const tx = await contract.claimReward(data.signature);
-                statusMsg.innerText = "Broadcasting to Blockchain...";
                 await tx.wait();
 
-                statusMsg.innerHTML = "🌱 REWARD MINTED: 0.01 ETH";
-                actionBtn.innerText = "Impact Recorded";
-                
-                // Force simulation update immediately
-                simulateActivity();
+                statusMsg.innerText = "🌱 REWARD MINTED: 0.01 ETH";
+                actionBtn.innerText = "Success";
+                simulateActivity(); // Update counter instantly
 
             } catch (err) {
                 console.error(err);
-                if (err.message.includes("already claimed")) {
-                    statusMsg.innerText = "🌟 You are already an Eco-Hero! (Reward already claimed)";
-                    statusMsg.className = "font-mono text-sm text-center mb-6 text-green-400";
-                } else if (err.code === "ACTION_REJECTED") {
-                    statusMsg.innerText = "Transaction Cancelled";
-                    statusMsg.className = "font-mono text-sm text-center mb-6 text-red-400";
-                } else {
-                    statusMsg.innerText = "Error: " + (err.message || "Failed");
-                    statusMsg.className = "font-mono text-sm text-center mb-6 text-red-400";
-                }
-                actionBtn.innerText = "Retry";
+                statusMsg.innerText = err.message.includes("already claimed") ? "Reward Already Claimed 🌿" : "Error: " + err.message;
+                statusMsg.className = "font-mono text-sm text-center mb-6 text-red-400";
+                actionBtn.innerText = "Try Again";
                 actionBtn.disabled = false;
             }
-        });
+        };
+
+        // --- ANIMATION ---
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.to(".hero-text", { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power3.out", delay: 0.2 });
     </script>
 </body>
 </html>
