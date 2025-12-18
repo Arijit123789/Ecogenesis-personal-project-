@@ -3,273 +3,393 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoGenesis | The Global Rebirth</title>
+    <title>EcoGenesis | Planatery OS</title>
     <link rel="icon" href="https://fav.farm/🌍" />
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.11.1/ethers.umd.min.js"></script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/globe.gl"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
-    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;800&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --neon-green: #00ff88;
-            --alert-red: #ff4b4b;
-            --deep-space: #020202;
+            --neon-blue: #00ccff;
+            --deep-space: #030305;
             --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-bg: rgba(20, 20, 20, 0.4);
+            --glass-bg: rgba(10, 10, 10, 0.6);
         }
 
         body {
             background-color: var(--deep-space);
             color: #ffffff;
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Space Grotesk', sans-serif; /* More futuristic font */
             overflow-x: hidden;
             margin: 0;
+            cursor: none; /* Custom Cursor Logic below */
         }
 
-        /* 3D Canvas Background */
-        #canvas-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            z-index: -1; opacity: 0.6; pointer-events: none;
+        /* Custom Cursor */
+        #cursor {
+            width: 20px; height: 20px; border: 1px solid var(--neon-green);
+            border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999;
+            transition: transform 0.1s; mix-blend-mode: difference;
+        }
+        #cursor-dot {
+            width: 4px; height: 4px; background: var(--neon-green);
+            border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999;
         }
 
-        /* Sticky Header */
+        /* Preloader */
+        #preloader {
+            position: fixed; inset: 0; background: #000; z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .loader-bar {
+            width: 200px; height: 2px; background: #333; margin-top: 20px;
+            overflow: hidden; position: relative;
+        }
+        .loader-progress {
+            width: 0%; height: 100%; background: var(--neon-green);
+            position: absolute; top: 0; left: 0;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        /* Header */
         header {
-            position: fixed; top: 0; left: 0; width: 100%; z-index: 100;
-            background: rgba(2, 2, 2, 0.7);
-            backdrop-filter: blur(25px);
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(3, 3, 5, 0.7); backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--glass-border);
         }
 
-        /* Text & UI */
-        .text-neon { color: var(--neon-green); text-shadow: 0 0 25px rgba(0, 255, 136, 0.4); }
-        
         /* Glass Cards */
         .glass-panel {
-            background: var(--glass-bg); backdrop-filter: blur(40px);
+            background: var(--glass-bg); backdrop-filter: blur(50px);
             border: 1px solid var(--glass-border); border-radius: 24px;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.5);
         }
 
-        /* Marquee Alert */
-        .marquee-container {
-            overflow: hidden; white-space: nowrap; background: rgba(255, 75, 75, 0.1);
-            border-y: 1px solid rgba(255, 75, 75, 0.2);
-        }
-        .marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-        /* Scanner */
+        /* Scanner Effect */
         .scanner-zone {
-            border: 2px dashed rgba(255, 255, 255, 0.15);
-            background: radial-gradient(circle at center, rgba(0, 255, 136, 0.02) 0%, transparent 70%);
-            position: relative; overflow: hidden; transition: 0.3s;
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            background: radial-gradient(circle at center, rgba(0, 255, 136, 0.03) 0%, transparent 70%);
+            overflow: hidden; position: relative; transition: all 0.4s ease;
         }
-        .scanner-zone:hover { border-color: var(--neon-green); }
+        .scanner-zone:hover { border-color: var(--neon-green); box-shadow: 0 0 30px rgba(0, 255, 136, 0.1); }
         .scan-line {
             position: absolute; width: 100%; height: 2px; background: var(--neon-green);
-            box-shadow: 0 0 15px var(--neon-green); top: 0; opacity: 0;
+            box-shadow: 0 0 20px var(--neon-green); top: 0; opacity: 0;
         }
-        .scanner-zone:hover .scan-line { opacity: 1; animation: scan 1.5s linear infinite; }
+        .scanner-zone:hover .scan-line { opacity: 1; animation: scan 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite; }
         @keyframes scan { 0% {top: 0;} 100% {top: 100%;} }
 
         /* Buttons */
         .btn-glow {
-            background: #fff; color: #000; padding: 14px 40px; border-radius: 100px;
-            font-weight: 600; transition: all 0.3s;
+            background: #fff; color: #000; padding: 16px 48px; border-radius: 100px;
+            font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1); position: relative; overflow: hidden;
         }
-        .btn-glow:hover { box-shadow: 0 0 40px rgba(255,255,255,0.3); transform: scale(1.02); }
-        
-        .btn-disconnect {
-            background: rgba(255, 75, 75, 0.1); color: #ff6b6b; border: 1px solid rgba(255, 75, 75, 0.3);
-            font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; margin-left: 10px; display: none;
+        .btn-glow::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            transition: 0.5s;
         }
+        .btn-glow:hover::after { left: 100%; }
+        .btn-glow:hover { box-shadow: 0 0 50px rgba(255,255,255,0.4); transform: scale(1.05); }
+
+        /* Audio Control */
+        #audio-ctrl {
+            position: fixed; bottom: 30px; left: 30px; z-index: 90;
+            width: 50px; height: 50px; border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s;
+        }
+        #audio-ctrl:hover { border-color: var(--neon-green); color: var(--neon-green); }
+        .equalizer-bar {
+            width: 3px; background: white; margin: 0 2px; animation: bounce 1s infinite;
+        }
+        @keyframes bounce { 0%, 100% {height: 5px;} 50% {height: 20px;} }
+        .paused .equalizer-bar { animation: none; height: 3px; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-green); }
     </style>
 </head>
 <body>
 
-    <div id="canvas-container"></div>
+    <div id="cursor"></div>
+    <div id="cursor-dot"></div>
+
+    <div id="preloader">
+        <div class="text-neon font-mono text-sm tracking-[0.5em] mb-4">INITIALIZING UPLINK</div>
+        <div class="loader-bar"><div class="loader-progress"></div></div>
+        <div class="text-gray-500 font-mono text-xs mt-4" id="loader-text">Connecting to Satellite...</div>
+    </div>
+
+    <audio id="ambient-audio" loop>
+        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=forest-wind-and-birds-6881.mp3" type="audio/mpeg">
+    </audio>
+    <div id="audio-ctrl" class="paused glass-panel" onclick="toggleAudio()">
+        <div class="equalizer-bar" style="animation-delay: 0s"></div>
+        <div class="equalizer-bar" style="animation-delay: 0.2s"></div>
+        <div class="equalizer-bar" style="animation-delay: 0.4s"></div>
+    </div>
 
     <header>
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold tracking-tighter flex items-center gap-3">
-                <span class="text-3xl animate-pulse">🌍</span>
+            <div class="text-2xl font-bold tracking-tighter flex items-center gap-3 select-none">
+                <span class="text-3xl animate-spin-slow">🌍</span>
                 <span class="text-white">Eco<span class="text-neon">Genesis</span></span>
             </div>
-            
-            <nav class="hidden md:flex gap-8 text-sm font-medium text-gray-400">
-                <a href="#mission" class="hover:text-white transition">The Crisis</a>
-                <a href="#stats" class="hover:text-white transition">Impact</a>
-                <a href="#upload" class="hover:text-white transition">Plant Now</a>
+            <nav class="hidden md:flex gap-8 text-xs font-bold tracking-widest text-gray-400 uppercase">
+                <a href="#mission" class="hover:text-white transition cursor-pointer">Crisis Data</a>
+                <a href="#map-section" class="hover:text-neon transition cursor-pointer text-white">Live Intel</a>
+                <a href="#upload" class="hover:text-white transition cursor-pointer">Deploy</a>
             </nav>
-
-            <div class="flex items-center">
-                <button id="header-connect-btn" class="border border-white/20 text-white hover:border-green-400 hover:text-green-400 px-5 py-2 rounded-full transition text-sm flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-gray-500" id="wallet-status-dot"></span>
-                    <span id="wallet-btn-text">Connect Wallet</span>
+            <div class="flex items-center gap-4">
+                <div id="wallet-status-container" class="hidden md:flex items-center gap-2 text-xs font-mono text-gray-500">
+                    <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse" id="net-dot"></span>
+                    SEPOLIA NET
+                </div>
+                <button id="header-connect-btn" class="border border-white/20 text-white hover:border-green-400 hover:text-green-400 px-6 py-2 rounded-full transition text-xs font-bold tracking-widest uppercase">
+                    Connect
                 </button>
-                <button id="disconnect-btn" class="btn-disconnect">Disconnect</button>
+                <button id="disconnect-btn" class="hidden text-xs text-red-400 hover:text-red-300 font-mono uppercase">Exit</button>
             </div>
         </div>
     </header>
 
     <main>
-        <section class="h-screen flex flex-col items-center justify-center relative">
-            <div class="z-10 text-center max-w-5xl px-4 mt-10">
-                <div class="hero-text opacity-0 translate-y-10">
-                    <span class="text-neon text-sm font-mono tracking-[0.3em] uppercase mb-4 block">System Failure Imminent</span>
+        <section class="h-screen flex flex-col items-center justify-center relative overflow-hidden">
+            <div class="absolute inset-0 z-0">
+                <div id="hero-globe-bg" class="opacity-30 w-full h-full absolute"></div> <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#030305]/80 to-[#030305]"></div>
+            </div>
+            
+            <div class="z-10 text-center max-w-6xl px-4 mt-20">
+                <div class="hero-element opacity-0 translate-y-10">
+                    <span class="inline-block py-1 px-3 rounded-full border border-green-500/30 bg-green-500/10 text-neon text-xs font-mono tracking-widest mb-6">
+                        ● SYSTEM ONLINE // v2.0
+                    </span>
                 </div>
-                <h1 class="text-7xl md:text-9xl font-bold mb-6 tracking-tighter leading-tight hero-text opacity-0 translate-y-10">
-                    Heal the <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-green-400">Broken World.</span>
+                <h1 class="text-7xl md:text-[11rem] font-bold mb-6 tracking-tighter leading-none hero-element opacity-0 translate-y-10">
+                    REBOOT <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-300 to-blue-500">EARTH.</span>
                 </h1>
-                <p class="text-xl text-gray-400 mb-10 max-w-2xl mx-auto hero-text opacity-0 translate-y-10">
-                    The first protocol that turns environmental action into immutable proof on the blockchain.
+                <p class="text-xl text-gray-400 mb-12 max-w-xl mx-auto hero-element opacity-0 translate-y-10 font-light">
+                    The decentralized operating system for planetary regeneration. 
+                    <span class="text-white">Verify actions. Earn Crypto. Save the World.</span>
                 </p>
-                <div class="hero-text opacity-0 translate-y-10">
+                <div class="hero-element opacity-0 translate-y-10">
                     <button onclick="document.getElementById('upload').scrollIntoView({behavior:'smooth'})" class="btn-glow">
-                        Initiate Repair
+                        Initialize Sequence
                     </button>
                 </div>
             </div>
         </section>
 
-        <div class="marquee-container py-3">
-            <div class="marquee-content text-sm font-mono text-red-300">
-                ⚠️ GLOBAL ALERT: AQI LEVELS CRITICAL IN 40+ CITIES &nbsp;&nbsp;///&nbsp;&nbsp; CO2 PPM EXCEEDS 420 &nbsp;&nbsp;///&nbsp;&nbsp; 150 SPECIES LOST DAILY &nbsp;&nbsp;///&nbsp;&nbsp; ACT NOW OR LOSE FOREVER &nbsp;&nbsp;///&nbsp;&nbsp; 
-                ⚠️ GLOBAL ALERT: AQI LEVELS CRITICAL IN 40+ CITIES &nbsp;&nbsp;///&nbsp;&nbsp; CO2 PPM EXCEEDS 420 &nbsp;&nbsp;///&nbsp;&nbsp; 150 SPECIES LOST DAILY &nbsp;&nbsp;///&nbsp;&nbsp; ACT NOW OR LOSE FOREVER &nbsp;&nbsp;///&nbsp;&nbsp; 
+        <div class="border-y border-white/10 bg-white/5 backdrop-blur-sm py-3 overflow-hidden">
+            <div class="marquee-content text-xs font-mono text-red-400 tracking-widest">
+                ⚠ CRITICAL: ATMOSPHERIC CO2 > 420 PPM /// BIODIVERSITY LOSS ACCELERATING /// ACTION REQUIRED /// ECOGENESIS PROTOCOL ACTIVE /// REWARD POOL: SOLVENT /// JOIN THE RESISTANCE /// 
+                ⚠ CRITICAL: ATMOSPHERIC CO2 > 420 PPM /// BIODIVERSITY LOSS ACCELERATING /// ACTION REQUIRED /// ECOGENESIS PROTOCOL ACTIVE /// REWARD POOL: SOLVENT /// JOIN THE RESISTANCE /// 
             </div>
         </div>
 
-        <section id="mission" class="py-32 bg-[#020202]/80 backdrop-blur-sm">
-            <div class="container mx-auto px-6">
-                <div class="grid md:grid-cols-2 gap-16 items-center">
-                    <div>
-                        <h2 class="text-5xl font-bold mb-8">The Crisis is Real.</h2>
-                        <div class="space-y-6 text-lg text-gray-400">
-                            <p>Our planet's lungs are failing. Urbanization has led to dangerous AQI levels, shortening life expectancy.</p>
-                            <p><strong class="text-white">EcoGenesis</strong> incentivizes the restoration of Earth's biomass.</p>
-                            <p class="text-neon">You plant. AI verifies. Blockchain pays.</p>
+        <section id="map-section" class="py-32 bg-[#030305] relative">
+            <div class="container mx-auto px-6 relative z-10">
+                <div class="grid lg:grid-cols-2 gap-16 items-center">
+                    
+                    <div class="order-2 lg:order-1">
+                        <div class="text-neon font-mono text-xs tracking-[0.3em] mb-4">REAL-TIME TELEMETRY</div>
+                        <h2 class="text-5xl md:text-7xl font-bold mb-6">Global Neural <br>Network</h2>
+                        
+                        <div class="flex items-baseline gap-4 mb-8">
+                            <div class="text-[6rem] font-bold leading-none text-white tabular-nums tracking-tighter" id="tree-counter">0</div>
+                            <div class="text-xl text-gray-500 font-mono">VERIFIED<br>NODES</div>
                         </div>
-                    </div>
-                    <div class="glass-panel p-8 relative">
-                        <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover rounded-xl opacity-80">
-                        <div class="absolute bottom-6 left-6 right-6">
-                            <div class="text-xs font-mono text-neon mb-1">STATUS: DEGRADED</div>
-                            <div class="h-1 w-full bg-gray-700 rounded-full overflow-hidden">
-                                <div class="h-full bg-red-500 w-[75%] animate-pulse"></div>
+
+                        <div class="glass-panel p-6 border-l-4 border-l-green-500">
+                            <div class="flex justify-between items-center mb-4">
+                                <span class="text-xs font-bold text-white uppercase tracking-wider">Recent Blocks</span>
+                                <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span>
+                            </div>
+                            <div class="space-y-3 font-mono text-xs text-gray-400" id="tx-feed">
+                                <div class="flex justify-between"><span>0x3a...9f21</span> <span class="text-green-400">+ 1 Oak (US)</span></div>
+                                <div class="flex justify-between"><span>0x7b...11c4</span> <span class="text-green-400">+ 5 Bamboo (CN)</span></div>
+                                <div class="flex justify-between"><span>0x1d...88a9</span> <span class="text-green-400">+ 1 Pine (DE)</span></div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="order-1 lg:order-2 h-[600px] relative pointer-events-auto" id="globe-wrapper">
+                        <div id="globe-viz" class="absolute inset-0 z-10"></div>
+                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-white/5 rounded-full z-0 animate-pulse"></div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="stats" class="py-32 relative border-t border-white/5">
-            <div class="text-center px-4">
-                <p class="text-neon font-mono text-sm tracking-[0.5em] mb-4">PROTOCOL METRICS</p>
-                <div class="text-[6rem] md:text-[12rem] font-bold leading-none text-white tabular-nums tracking-tighter" id="tree-counter">0</div>
-                <p class="text-2xl text-gray-500 mt-4">Verified Regenerations</p>
-            </div>
-        </section>
+        <section id="upload" class="min-h-screen py-20 flex items-center justify-center relative">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-green-500/5 rounded-full blur-3xl -z-10"></div>
 
-        <section id="upload" class="min-h-screen py-20 flex items-center justify-center">
-            <div class="glass-panel w-full max-w-2xl p-10 relative">
-                <h2 class="text-4xl font-bold mb-2">Submit Proof of Work</h2>
-                <p class="text-gray-400 mb-8">Upload evidence of recent planting activity.</p>
+            <div class="glass-panel w-full max-w-2xl p-12 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-green-500 to-transparent opacity-50"></div>
 
-                <div id="drop-area" class="scanner-zone rounded-2xl h-80 flex flex-col items-center justify-center cursor-pointer mb-8 group">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h2 class="text-4xl font-bold text-white">Upload Evidence</h2>
+                        <p class="text-gray-400 mt-2 font-mono text-sm">AI Verification Agent: <span class="text-green-400">ONLINE</span></p>
+                    </div>
+                    <div class="text-xs font-mono text-gray-500 border border-gray-700 px-3 py-1 rounded">SECURE CHANNEL</div>
+                </div>
+
+                <div id="drop-area" class="scanner-zone rounded-xl h-80 flex flex-col items-center justify-center cursor-pointer mb-8 group bg-black/40">
                     <input type="file" id="file-input" class="hidden" accept="image/*">
                     <div class="scan-line"></div>
-                    <div id="upload-placeholder" class="text-center transition-opacity duration-300 z-10">
-                        <div class="text-4xl mb-4">📸</div>
-                        <p class="text-lg font-medium text-white">Initialize Scan</p>
+                    
+                    <div id="upload-placeholder" class="text-center z-10 transition-all duration-300 group-hover:scale-105">
+                        <div class="w-20 h-20 rounded-full border border-gray-600 flex items-center justify-center mx-auto mb-6 group-hover:border-green-400 group-hover:shadow-[0_0_20px_#00ff88] transition-all bg-black/50 text-3xl">
+                            📸
+                        </div>
+                        <p class="text-lg font-bold text-white tracking-wide">DROP IMAGE DATA</p>
+                        <p class="text-xs text-gray-500 font-mono mt-2">.JPG .PNG .HEIC SUPPORTED</p>
                     </div>
+                    
                     <div id="preview-container" class="absolute inset-0 bg-black hidden flex-col items-center justify-center z-20">
                         <img id="image-preview" class="h-full w-full object-cover opacity-60">
-                        <div class="absolute bottom-4 bg-black/80 px-4 py-2 rounded-full text-xs font-mono text-neon border border-green-500/30">
-                            IMAGE ACQUIRED
+                        <div class="absolute bottom-6 bg-black/80 backdrop-blur px-6 py-2 rounded-full text-xs font-mono text-neon border border-green-500/30 flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 animate-pulse rounded-full"></span>
+                            IMAGE LOCKED
                         </div>
                     </div>
                 </div>
 
-                <div id="status-msg" class="font-mono text-sm text-center min-h-[24px] mb-6 text-gray-500">Awaiting Input...</div>
-                <button id="action-btn" class="w-full btn-glow opacity-50 cursor-not-allowed" disabled>Verify & Mint Reward</button>
+                <div id="status-msg" class="font-mono text-xs text-center min-h-[24px] mb-6 text-gray-500 tracking-widest uppercase">
+                    // Awaiting User Input...
+                </div>
+                
+                <button id="action-btn" class="w-full btn-glow opacity-50 grayscale cursor-not-allowed" disabled>
+                    Verify & Mint Reward
+                </button>
             </div>
         </section>
+
     </main>
 
-    <footer class="py-20 border-t border-white/5 bg-black text-center md:text-left">
+    <footer class="py-20 border-t border-white/5 bg-black text-center md:text-left relative z-10">
         <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
-            <div class="text-2xl font-bold">🌍 EcoGenesis</div>
+            <div>
+                <div class="text-2xl font-bold mb-2 flex items-center gap-2 justify-center md:justify-start">
+                    🌍 EcoGenesis <span class="text-xs align-top text-gray-600">v2.4</span>
+                </div>
+                <p class="text-gray-600 text-sm max-w-md">
+                    A decentralized protocol incentivizing carbon capture through cryptoeconomic game theory.
+                </p>
+            </div>
+            
             <div class="text-right">
-                <p class="text-gray-500 text-sm mb-2">Engineered by <span class="text-white font-semibold">Arijit Bhaya</span></p>
-                <div class="flex gap-6 justify-center md:justify-end text-sm font-medium">
-                    <a href="https://www.linkedin.com/in/arijitbhaya" target="_blank" class="text-gray-400 hover:text-white transition">LinkedIn</a>
-                    <a href="https://github.com/Arijit123789" target="_blank" class="text-gray-400 hover:text-white transition">GitHub</a>
+                <p class="text-gray-500 text-sm mb-4 font-mono">ARCHITECT: <span class="text-white">ARIJIT BHAYA</span></p>
+                <div class="flex gap-6 justify-center md:justify-end text-sm font-bold tracking-widest uppercase">
+                    <a href="https://www.linkedin.com/in/arijitbhaya" target="_blank" class="text-gray-500 hover:text-white transition">LinkedIn</a>
+                    <a href="https://github.com/Arijit123789" target="_blank" class="text-gray-500 hover:text-white transition">GitHub</a>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
+        // --- 0. PRELOADER ---
+        window.addEventListener('load', () => {
+            const tl = gsap.timeline();
+            tl.to(".loader-progress", { width: "100%", duration: 1.5, ease: "power2.inOut" })
+              .to("#loader-text", { text: "Uplink Established", duration: 0.5 })
+              .to("#preloader", { y: "-100%", duration: 1, ease: "expo.inOut", delay: 0.2 })
+              .from(".hero-element", { y: 50, opacity: 0, stagger: 0.1, duration: 1, ease: "power3.out" }, "-=0.5");
+        });
+
+        // --- 1. CONFIGURATION ---
         const CONTRACT_ADDRESS = "0xc329a783119e8b4219098c96493eb6783009601e";
         const BACKEND_URL = "/verify-planting";
         const CONTRACT_ABI = ["function claimReward(bytes memory signature) external"];
 
-        // --- 3D EARTH BACKGROUND (Three.js) ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        // --- 2. 3D GLOBE (God Tier) ---
+        const globeContainer = document.getElementById('globe-viz');
+        const N = 60;
+        
+        // Random Data Arcs (Simulating transactions)
+        const arcsData = [...Array(20).keys()].map(() => ({
+            startLat: (Math.random() - 0.5) * 180,
+            startLng: (Math.random() - 0.5) * 360,
+            endLat: (Math.random() - 0.5) * 180,
+            endLng: (Math.random() - 0.5) * 360,
+            color: [['#00ff88', '#00ccff'][Math.round(Math.random())]]
+        }));
 
-        const geometry = new THREE.SphereGeometry(2, 64, 64);
-        const material = new THREE.MeshBasicMaterial({ 
-            color: 0x00ff88, 
-            wireframe: true,
-            transparent: true,
-            opacity: 0.15 
+        const world = Globe()
+            .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+            .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+            .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+            .arcsData(arcsData)
+            .arcColor('color')
+            .arcDashLength(0.4)
+            .arcDashGap(2)
+            .arcDashInitialGap(() => Math.random())
+            .arcDashAnimateTime(4000)
+            .atmosphereColor('#00ccff')
+            .atmosphereAltitude(0.2)
+            (globeContainer);
+
+        world.controls().autoRotate = true;
+        world.controls().autoRotateSpeed = 0.5;
+        world.controls().enableZoom = false;
+
+        // --- 3. CUSTOM CURSOR ---
+        const cursor = document.getElementById('cursor');
+        const cursorDot = document.getElementById('cursor-dot');
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX - 10, y: e.clientY - 10, duration: 0.2 });
+            gsap.to(cursorDot, { x: e.clientX - 2, y: e.clientY - 2, duration: 0 });
         });
-        const earth = new THREE.Mesh(geometry, material);
-        scene.add(earth);
-        camera.position.z = 5;
 
-        function animate() {
-            requestAnimationFrame(animate);
-            earth.rotation.y += 0.002;
-            earth.rotation.x += 0.0005;
-            renderer.render(scene, camera);
+        // --- 4. AUDIO TOGGLE ---
+        const audio = document.getElementById('ambient-audio');
+        const audioCtrl = document.getElementById('audio-ctrl');
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play();
+                audioCtrl.classList.remove('paused');
+            } else {
+                audio.pause();
+                audioCtrl.classList.add('paused');
+            }
         }
-        animate();
 
-        // --- ANIMATIONS ---
+        // --- 5. ANIMATIONS (Scroll) ---
         const lenis = new Lenis();
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
         gsap.registerPlugin(ScrollTrigger);
-        
-        gsap.to(".hero-text", { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power3.out", delay: 0.2 });
 
-        let baseCount = 1428; 
-        const counterEl = document.getElementById("tree-counter");
-        gsap.to(counterEl, {
-            innerText: baseCount, snap: { innerText: 1 }, duration: 2.5, ease: "power2.out",
-            scrollTrigger: { trigger: "#stats", start: "top 85%" }
+        // Live Counter
+        let baseCount = 1428;
+        gsap.to("#tree-counter", {
+            innerText: baseCount, snap: { innerText: 1 }, duration: 3, ease: "power2.out",
+            scrollTrigger: { trigger: "#map-section", start: "top 80%" }
         });
 
-        // --- WALLET ---
+        // --- 6. WALLET LOGIC ---
         let provider, signer, userAddress;
         const walletBtn = document.getElementById('header-connect-btn');
         const disconnectBtn = document.getElementById('disconnect-btn');
-        const walletText = document.getElementById('wallet-btn-text');
-        const walletDot = document.getElementById('wallet-status-dot');
 
         async function connectWallet() {
-            if (!window.ethereum) return alert("MetaMask not detected.");
+            if (!window.ethereum) return alert("MetaMask required for uplink.");
             try {
                 provider = new ethers.BrowserProvider(window.ethereum);
                 await provider.send("eth_requestAccounts", []);
@@ -278,39 +398,41 @@
                 
                 const network = await provider.getNetwork();
                 if (network.chainId !== 11155111n) {
-                    try { await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0xaa36a7" }] }); } 
-                    catch { alert("Switch to Sepolia Testnet."); return; }
+                    try { await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0xaa36a7" }] }); }
+                    catch { alert("Sepolia Network Required."); return; }
                     provider = new ethers.BrowserProvider(window.ethereum);
                 }
-                updateWalletUI(true);
+                updateUI(true);
             } catch (e) { console.error(e); }
         }
 
-        function disconnectWallet() { userAddress = null; signer = null; updateWalletUI(false); }
-
-        function updateWalletUI(isConnected) {
-            if (isConnected) {
-                walletText.innerText = userAddress.slice(0,6) + "..." + userAddress.slice(-4);
-                walletDot.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#00ff88]";
-                disconnectBtn.style.display = "block";
+        function disconnect() { userAddress = null; updateUI(false); }
+        
+        function updateUI(connected) {
+            if (connected) {
+                walletBtn.innerText = userAddress.slice(0,6) + "..." + userAddress.slice(-4);
+                walletBtn.classList.add('border-green-500', 'text-green-400');
+                disconnectBtn.classList.remove('hidden');
+                document.getElementById('net-dot').classList.replace('bg-red-500', 'bg-green-500');
             } else {
-                walletText.innerText = "Connect Wallet";
-                walletDot.className = "w-2 h-2 rounded-full bg-gray-500";
-                disconnectBtn.style.display = "none";
+                walletBtn.innerText = "CONNECT";
+                walletBtn.classList.remove('border-green-500', 'text-green-400');
+                disconnectBtn.classList.add('hidden');
+                document.getElementById('net-dot').classList.replace('bg-green-500', 'bg-red-500');
             }
         }
 
-        walletBtn.addEventListener('click', () => { if(!userAddress) connectWallet(); });
-        disconnectBtn.addEventListener('click', disconnectWallet);
+        walletBtn.onclick = () => !userAddress && connectWallet();
+        disconnectBtn.onclick = disconnect;
 
-        // --- VERIFY ---
+        // --- 7. UPLOAD & VERIFY (The Core) ---
         const fileInput = document.getElementById('file-input');
         const actionBtn = document.getElementById('action-btn');
         const statusMsg = document.getElementById('status-msg');
         let selectedFile;
 
-        document.getElementById('drop-area').addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => {
+        document.getElementById('drop-area').onclick = () => fileInput.click();
+        fileInput.onchange = (e) => {
             selectedFile = e.target.files[0];
             if (selectedFile) {
                 const reader = new FileReader();
@@ -319,53 +441,67 @@
                     document.getElementById('preview-container').classList.remove('hidden');
                     document.getElementById('preview-container').classList.add('flex');
                     actionBtn.disabled = false;
-                    actionBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    actionBtn.classList.remove('opacity-50', 'grayscale', 'cursor-not-allowed');
                 };
                 reader.readAsDataURL(selectedFile);
             }
-        });
+        };
 
-        actionBtn.addEventListener('click', async () => {
+        actionBtn.onclick = async () => {
             if (!userAddress) { await connectWallet(); if(!userAddress) return; }
             
             actionBtn.disabled = true;
-            statusMsg.innerText = "Interfacing with Gemini AI...";
-            statusMsg.className = "font-mono text-sm text-center mb-6 text-yellow-400";
+            actionBtn.innerText = "ANALYZING BIOMETRICS...";
+            statusMsg.innerText = "/// UPLOADING TO NEURAL NET...";
+            statusMsg.classList.add('text-yellow-400');
 
             const formData = new FormData();
             formData.append('image', selectedFile);
             formData.append('address', userAddress);
 
             try {
+                // Verify
                 const res = await fetch(BACKEND_URL, { method: 'POST', body: formData });
                 const data = await res.json();
                 if (!data.success) throw new Error(data.message);
 
-                statusMsg.innerText = "Tree Identified! Confirming...";
-                statusMsg.className = "font-mono text-sm text-center mb-6 text-green-400";
-
+                statusMsg.innerText = "/// MATCH CONFIRMED. SIGNING...";
+                statusMsg.classList.replace('text-yellow-400', 'text-green-400');
+                
+                // Claim
                 const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
                 const tx = await contract.claimReward(data.signature);
+                statusMsg.innerText = "/// EXECUTING CONTRACT...";
                 await tx.wait();
 
-                statusMsg.innerHTML = "🌱 REWARD MINTED: 0.01 ETH";
-                actionBtn.innerText = "Impact Recorded";
+                // SUCCESS STATE
+                statusMsg.innerHTML = "✅ REWARD MINTED: 0.01 ETH";
+                actionBtn.innerText = "MISSION COMPLETE";
+                
+                // CONFETTI EXPLOSION
+                confetti({
+                    particleCount: 150, spread: 70, origin: { y: 0.6 },
+                    colors: ['#00ff88', '#00ccff', '#ffffff']
+                });
+
+                // Update Stats
                 baseCount++;
-                gsap.to(counterEl, { innerText: baseCount, snap: { innerText: 1 }, duration: 1 });
+                gsap.to("#tree-counter", { innerText: baseCount, snap: { innerText: 1 }, duration: 1 });
 
             } catch (err) {
                 console.error(err);
+                statusMsg.classList.replace('text-yellow-400', 'text-red-400');
                 if (err.message.includes("already claimed")) {
-                    statusMsg.innerText = "🌟 You are already an Eco-Hero! (Reward already claimed)";
-                    statusMsg.className = "font-mono text-sm text-center mb-6 text-green-400";
+                    statusMsg.innerText = "⚠ NODE ALREADY REWARDED";
+                } else if (err.code === "ACTION_REJECTED") {
+                    statusMsg.innerText = "⚠ USER ABORTED UPLINK";
                 } else {
-                    statusMsg.innerText = "Error: " + (err.message || "Failed");
-                    statusMsg.className = "font-mono text-sm text-center mb-6 text-red-400";
+                    statusMsg.innerText = "⚠ NETWORK ERROR";
                 }
-                actionBtn.innerText = "Retry";
+                actionBtn.innerText = "RETRY";
                 actionBtn.disabled = false;
             }
-        });
+        };
     </script>
 </body>
 </html>
