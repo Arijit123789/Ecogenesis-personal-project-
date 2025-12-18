@@ -327,29 +327,55 @@
             if (!window.ethereum) return alert("Please install MetaMask!");
             
             try {
+                // 1. Initial Connection
                 provider = new ethers.BrowserProvider(window.ethereum);
+                const network = await provider.getNetwork();
+                
+                // 2. Check if we need to switch to Sepolia (Chain ID 11155111)
+                if (network.chainId !== 11155111n) {
+                    try {
+                        await window.ethereum.request({
+                            method: "wallet_switchEthereumChain",
+                            params: [{ chainId: "0xaa36a7" }] // Sepolia Hex ID
+                        });
+                        
+                        // 🌟 CRITICAL FIX: Re-initialize provider after switch
+                        // This tells ethers.js: "Okay, we moved to a new chain, update yourself!"
+                        provider = new ethers.BrowserProvider(window.ethereum);
+                        
+                    } catch (switchError) {
+                        // This error code indicates that the chain has not been added to MetaMask.
+                        if (switchError.code === 4902) {
+                             alert("Please add Sepolia network to your MetaMask!");
+                        } else {
+                             alert("Please switch to Sepolia Testnet manually.");
+                        }
+                        return false;
+                    }
+                }
+
+                // 3. Get Account Access
                 await provider.send("eth_requestAccounts", []);
                 signer = await provider.getSigner();
                 userAddress = await signer.getAddress();
-                
-                // Network Check (Sepolia)
-                const network = await provider.getNetwork();
-                if (network.chainId !== 11155111n) {
-                    try { await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0xaa36a7" }] }); } 
-                    catch (e) { alert("Please switch to Sepolia Testnet."); }
-                }
 
-                // Update UI
-                walletText.innerText = userAddress.slice(0,6) + "..." + userAddress.slice(-4);
-                walletDot.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#00ff88]";
+                // 4. Update UI
+                if(walletText) walletText.innerText = userAddress.slice(0,6) + "..." + userAddress.slice(-4);
+                if(walletDot) walletDot.className = "w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#00ff88]";
                 walletBtn.classList.add("border-green-500", "text-green-500");
+                
                 return true;
             } catch (e) {
                 console.error(e);
                 return false;
             }
         }
-        
+        // Auto-refresh if user changes chain manually
+        if (window.ethereum) {
+            window.ethereum.on('chainChanged', () => {
+                window.location.reload();
+            });
+        }
         // 8. Fixed Connect Button Click
         walletBtn.addEventListener('click', connectWallet);
 
