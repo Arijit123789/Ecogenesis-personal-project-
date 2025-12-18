@@ -59,9 +59,8 @@
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        const CONTRACT_ADDRESS = "0xc329A783119E8b4219098C96493eb6783009601e"; // <--- PASTE REMIX ADDRESS HERE
-        const BACKEND_URL = "/verify-planting"; // Relative path for Vercel
+        const CONTRACT_ADDRESS = "0xc329A783119E8b4219098C96493eb6783009601e"; 
+        const BACKEND_URL = "/verify-planting";
         const CONTRACT_ABI = ["function claimReward(bytes memory signature) external"];
 
         let provider, signer, userAddress, selectedFile;
@@ -80,7 +79,6 @@
             signer = await provider.getSigner();
             userAddress = await signer.getAddress();
             
-            // Switch to Sepolia
             const network = await provider.getNetwork();
             if (network.chainId !== 11155111n) {
                 try { await window.ethereum.request({ method: "wallet_switchEthereumChain", params: [{ chainId: "0xaa36a7" }] }); } 
@@ -141,12 +139,32 @@
                 
                 statusMsg.innerText = "SUCCESS! Reward Sent.";
                 actionBtn.innerText = "Claimed!";
+                
             } catch (err) {
                 console.error(err);
-                statusMsg.innerText = "Error: " + err.message;
-                statusMsg.className = "text-red-500 text-center mb-4";
+                
+                // --- THIS IS WHERE THE ERROR UI LOGIC GOES ---
+                
+                // 1. Check if User Rejected (cancelled) the transaction
+                if (err.code === "ACTION_REJECTED" || err.code === 4001 || (err.message && err.message.includes("rejected"))) {
+                    statusMsg.innerText = "Transaction Cancelled";
+                    statusMsg.className = "text-yellow-400 text-center mb-4"; 
+                    actionBtn.innerText = "Try Again";
+                } 
+                // 2. Check if Pool is Empty
+                else if (err.message && err.message.includes("Contract is out of funds")) {
+                    statusMsg.innerText = "Error: Reward Pool is Empty!";
+                    statusMsg.className = "text-red-500 text-center mb-4";
+                    actionBtn.innerText = "Pool Empty";
+                }
+                // 3. Other Errors
+                else {
+                    statusMsg.innerText = "Error: " + (err.reason || err.message || "Failed");
+                    statusMsg.className = "text-red-500 text-center mb-4";
+                    actionBtn.innerText = "Try Again";
+                }
+                
                 actionBtn.disabled = false;
-                actionBtn.innerText = "Try Again";
             }
         });
     </script>
