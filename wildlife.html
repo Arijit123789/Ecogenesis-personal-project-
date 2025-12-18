@@ -3,147 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoGenesis | The Archive</title>
+    <title>EcoGenesis | Legacy</title>
     <link rel="icon" href="https://fav.farm/🐆" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet">
-    
     <style>
-        :root { --gold: #d4af37; --dark: #050505; }
-        body { background: var(--dark); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-        h1, h2, h3 { font-family: 'Cinzel', serif; }
-        
-        /* Smooth Parallax Hero */
-        .hero-bg {
-            animation: zoom 20s infinite alternate;
-        }
-        @keyframes zoom { from { transform: scale(1); } to { transform: scale(1.15); } }
-
-        /* Museum Cards */
-        .species-card {
-            position: relative; overflow: hidden; border-radius: 16px;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        .species-card:hover {
-            border-color: var(--gold);
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-        .species-card img { transition: transform 0.7s ease; }
-        .species-card:hover img { transform: scale(1.1); }
-        
-        .status-badge {
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 50, 50, 0.5); color: #ff6b6b;
-            text-transform: uppercase; font-size: 0.7rem; letter-spacing: 2px;
-            padding: 4px 12px; border-radius: 4px;
-        }
+        body { background: #050505; color: white; font-family: 'Inter', sans-serif; }
+        h1, h2 { font-family: 'Cinzel', serif; }
+        .species-card { position: relative; height: 500px; overflow: hidden; border-radius: 16px; transition: transform 0.3s; }
+        .species-card:hover { transform: translateY(-10px); }
     </style>
 </head>
 <body>
 
     <header class="fixed top-0 w-full z-50 bg-black/50 backdrop-blur-md border-b border-white/10">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/" class="text-xl font-bold tracking-widest text-white hover:text-green-400 transition">ECOGENESIS</a>
+            <a href="/" class="text-xl font-bold tracking-widest text-white">ECOGENESIS</a>
             <nav class="hidden md:flex gap-6 text-xs font-medium tracking-widest text-gray-400 uppercase">
-                <a href="/" class="hover:text-white transition">Command Center</a>
-                <a href="/guide" class="hover:text-white transition">Field Guide</a>
+                <a href="/" class="hover:text-white transition">Home</a>
+                <a href="/guide" class="hover:text-white transition">Guide</a>
             </nav>
         </div>
     </header>
 
     <main>
-        <section class="h-screen relative flex items-center justify-center overflow-hidden">
-            <div class="absolute inset-0 z-0">
-                <img src="https://images.unsplash.com/photo-1516934024742-b461fba47600?auto=format&fit=crop&w=2000&q=80" class="w-full h-full object-cover opacity-50 hero-bg">
-                <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-[#050505]"></div>
-            </div>
-            
-            <div class="z-10 text-center px-4 max-w-4xl">
-                <span class="text-gold tracking-[0.5em] text-xs font-bold uppercase mb-4 block animate-pulse">Archive v1.0</span>
-                <h1 class="text-5xl md:text-8xl font-bold mb-6 text-white leading-tight">The Silent<br>Vanishing</h1>
-                <p class="text-gray-300 text-lg md:text-xl font-light max-w-2xl mx-auto leading-relaxed">
-                    We are witnessing the sixth mass extinction. <br>
-                    <span class="text-white border-b border-gold">EcoGenesis</span> is the firewall against total collapse.
-                </p>
+        <section class="h-[80vh] relative flex items-center justify-center overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1516934024742-b461fba47600?auto=format&fit=crop&w=2000&q=80" class="absolute inset-0 w-full h-full object-cover opacity-50">
+            <div class="relative z-10 text-center">
+                <h1 class="text-6xl md:text-8xl font-bold mb-4">The Silent<br>Vanishing</h1>
+                <p class="text-gray-300 text-xl max-w-2xl mx-auto">Protecting what remains.</p>
             </div>
         </section>
 
-        <section class="py-24 px-6 relative z-10">
-            <div class="container mx-auto">
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    
-                    <div class="species-card group h-[500px]">
-                        <img src="https://images.unsplash.com/photo-1500964757637-c85e8a162699?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-90"></div>
-                        <div class="absolute bottom-0 left-0 p-8 w-full">
-                            <div class="flex justify-between items-end mb-2">
-                                <h3 class="text-3xl text-white">Sumatran Tiger</h3>
-                                <span class="status-badge">Critical</span>
-                            </div>
-                            <p class="text-gray-400 text-sm leading-relaxed translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500 delay-100">
-                                Less than 400 remain. The relentless expansion of palm oil plantations has fractured their ancient corridors in Indonesia.
-                            </p>
-                        </div>
+        <section class="py-24 px-6">
+            <div class="container mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <div class="species-card group">
+                    <img src="https://images.unsplash.com/photo-1500964757637-c85e8a162699?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+                    <div class="absolute bottom-0 left-0 p-8">
+                        <h3 class="text-3xl font-bold text-white mb-2">Sumatran Tiger</h3>
+                        <p class="text-red-400 text-xs font-bold uppercase tracking-widest">Critically Endangered</p>
                     </div>
-
-                    <div class="species-card group h-[500px]">
-                        <img src="https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-90"></div>
-                        <div class="absolute bottom-0 left-0 p-8 w-full">
-                            <div class="flex justify-between items-end mb-2">
-                                <h3 class="text-3xl text-white">Asian Elephant</h3>
-                                <span class="status-badge">Endangered</span>
-                            </div>
-                            <p class="text-gray-400 text-sm leading-relaxed translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500 delay-100">
-                                Engineers of the forest. As their habitat shrinks to 15% of its historical range, human conflict becomes inevitable.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="species-card group h-[500px]">
-                        <img src="https://images.unsplash.com/photo-1543160271-460d3d527230?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-90"></div>
-                        <div class="absolute bottom-0 left-0 p-8 w-full">
-                            <div class="flex justify-between items-end mb-2">
-                                <h3 class="text-3xl text-white">Bornean Orangutan</h3>
-                                <span class="status-badge">Critical</span>
-                            </div>
-                            <p class="text-gray-400 text-sm leading-relaxed translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-500 delay-100">
-                                "Person of the forest." Over 100,000 lost in just two decades due to logging and hunting.
-                            </p>
-                        </div>
-                    </div>
-
                 </div>
+
+                <div class="species-card group">
+                    <img src="https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+                    <div class="absolute bottom-0 left-0 p-8">
+                        <h3 class="text-3xl font-bold text-white mb-2">Asian Elephant</h3>
+                        <p class="text-orange-400 text-xs font-bold uppercase tracking-widest">Endangered</p>
+                    </div>
+                </div>
+
+                <div class="species-card group">
+                    <img src="https://images.unsplash.com/photo-1543160271-460d3d527230?auto=format&fit=crop&w=800&q=80" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+                    <div class="absolute bottom-0 left-0 p-8">
+                        <h3 class="text-3xl font-bold text-white mb-2">Orangutan</h3>
+                        <p class="text-red-400 text-xs font-bold uppercase tracking-widest">Critical</p>
+                    </div>
+                </div>
+
             </div>
         </section>
-
-        <section class="py-32 flex flex-col items-center text-center bg-black border-t border-white/10">
-            <h2 class="text-4xl md:text-6xl font-bold mb-8 text-white">Don't let them become<br>just memories.</h2>
-            <a href="/guide" class="bg-white text-black px-10 py-4 rounded-full font-bold tracking-wide hover:scale-105 transition duration-300">
-                START PLANTING
-            </a>
-        </section>
-
     </main>
-
-    <script>
-        const lenis = new Lenis();
-        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-        requestAnimationFrame(raf);
-
-        gsap.registerPlugin(ScrollTrigger);
-        
-        // Staggered Entrance
-        gsap.from(".species-card", {
-            y: 100, opacity: 0, duration: 1, stagger: 0.2, ease: "power3.out",
-            scrollTrigger: { trigger: ".grid", start: "top 85%" }
-        });
-    </script>
 </body>
 </html>
