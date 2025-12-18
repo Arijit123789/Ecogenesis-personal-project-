@@ -6,55 +6,121 @@
     <title>EcoGenesis | Field Manual</title>
     <link rel="icon" href="https://fav.farm/🌱" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>body { background: #050505; color: white; font-family: 'Outfit', sans-serif; }</style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --neon: #22c55e; --bg: #050505; }
+        body { background: var(--bg); color: white; font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+        h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
+        
+        .step-num {
+            font-size: 8rem; line-height: 1; font-weight: 800;
+            color: transparent; -webkit-text-stroke: 2px rgba(255,255,255,0.1);
+            position: absolute; top: -40px; left: -20px; z-index: 0;
+        }
+        .step-content { position: relative; z-index: 10; }
+        
+        .image-wrapper {
+            border-radius: 24px; overflow: hidden; position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .image-wrapper img { transition: transform 0.7s ease; }
+        .image-wrapper:hover img { transform: scale(1.05); }
+    </style>
 </head>
 <body>
 
     <header class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="/" class="text-xl font-bold">EcoGenesis</a>
-            <a href="/" class="text-sm text-gray-400 hover:text-white">Back</a>
+            <a href="/" class="text-xl font-bold flex items-center gap-2">
+                <span class="text-2xl">🌱</span> <span class="tracking-wide">EcoGenesis</span>
+            </a>
+            <a href="/" class="text-sm font-medium text-gray-400 hover:text-white transition">Back to Command</a>
         </div>
     </header>
 
     <main class="pt-40 pb-20">
-        <div class="container mx-auto px-6 max-w-4xl text-center mb-20">
-            <h1 class="text-6xl font-bold mb-4">Planting Protocol</h1>
-            <p class="text-xl text-gray-400">Follow these steps to ensure survival and verification.</p>
+        
+        <div class="container mx-auto px-6 text-center max-w-3xl mb-32">
+            <span class="text-neon tracking-[0.3em] text-sm font-bold uppercase">Field Manual v2.0</span>
+            <h1 class="text-5xl md:text-7xl font-bold mt-4 mb-6 leading-tight">The Art of<br>Regeneration</h1>
+            <p class="text-xl text-gray-400">
+                Planting a tree is precision engineering. Follow these protocols to ensure maximum survival rate and verify your proof-of-work.
+            </p>
         </div>
 
-        <div class="container mx-auto px-6 max-w-5xl space-y-24">
+        <div class="container mx-auto px-6 max-w-6xl space-y-32">
             
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <span class="text-6xl font-bold text-green-500 opacity-50 block mb-4">01</span>
-                    <h3 class="text-3xl font-bold mb-4">Select the Site</h3>
-                    <p class="text-gray-400 text-lg">Choose a location with good drainage and sunlight. Ensure enough space for the tree to reach full maturity.</p>
+            <div class="grid md:grid-cols-2 gap-16 items-center step-row">
+                <div class="relative pl-8">
+                    <div class="step-num">01</div>
+                    <div class="step-content">
+                        <h3 class="text-4xl font-bold mb-4 text-white">Site Reconnaissance</h3>
+                        <p class="text-gray-400 text-lg leading-relaxed">
+                            Do not plant blindly. Analyze the terrain. Ensure the soil drains well and the location receives adequate sunlight. Avoid proximity to concrete foundations or overhead power lines.
+                        </p>
+                    </div>
                 </div>
-                <img src="https://images.unsplash.com/photo-1592419044706-39796d40f98c?auto=format&fit=crop&w=800&q=80" class="rounded-2xl shadow-2xl h-80 w-full object-cover">
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <img src="https://images.unsplash.com/photo-1416879895648-5b43727ad51b?auto=format&fit=crop&w=800&q=80" class="rounded-2xl shadow-2xl h-80 w-full object-cover order-2 md:order-1">
-                <div class="order-1 md:order-2">
-                    <span class="text-6xl font-bold text-green-500 opacity-50 block mb-4">02</span>
-                    <h3 class="text-3xl font-bold mb-4">Dig Correctly</h3>
-                    <p class="text-gray-400 text-lg">Dig a hole 2-3 times wider than the root ball, but no deeper. The root flare should sit slightly above ground level.</p>
+                <div class="image-wrapper h-80 md:h-96">
+                    <img src="https://images.unsplash.com/photo-1598556776374-227366eb9942?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div>
-                    <span class="text-6xl font-bold text-green-500 opacity-50 block mb-4">03</span>
-                    <h3 class="text-3xl font-bold mb-4">Plant & Verify</h3>
-                    <p class="text-gray-400 text-lg">Backfill with native soil and water immediately. Take a photo of the planted tree to upload for your reward.</p>
-                    <a href="/#upload" class="inline-block mt-4 text-green-400 font-bold hover:underline">Go to Upload -></a>
+            <div class="grid md:grid-cols-2 gap-16 items-center step-row">
+                <div class="image-wrapper h-80 md:h-96 order-2 md:order-1">
+                    <img src="https://images.unsplash.com/photo-1615427911942-5f65b404430e?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
                 </div>
-                <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80" class="rounded-2xl shadow-2xl h-80 w-full object-cover">
+                <div class="relative pl-8 order-1 md:order-2">
+                    <div class="step-num">02</div>
+                    <div class="step-content">
+                        <h3 class="text-4xl font-bold mb-4 text-white">Excavation</h3>
+                        <p class="text-gray-400 text-lg leading-relaxed">
+                            Precision matters. Dig a hole 2-3 times wider than the root ball, but <strong class="text-white">no deeper</strong>. The root flare (where trunk meets roots) must remain visible above the soil line to prevent rot.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-16 items-center step-row">
+                <div class="relative pl-8">
+                    <div class="step-num">03</div>
+                    <div class="step-content">
+                        <h3 class="text-4xl font-bold mb-4 text-white">Execution & Verification</h3>
+                        <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                            Place the sapling. Backfill with native soil. Water immediately to remove air pockets.
+                            <br><br>
+                            <span class="text-neon font-bold">CRITICAL:</span> Take a clear photo of your work. This is your "Proof of Planting" to mint your reward.
+                        </p>
+                        <a href="/#upload" class="inline-flex items-center gap-2 bg-neon text-black px-8 py-3 rounded-full font-bold hover:bg-white transition">
+                            <span>🚀</span> I'm Ready to Upload
+                        </a>
+                    </div>
+                </div>
+                <div class="image-wrapper h-80 md:h-96">
+                    <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80" class="w-full h-full object-cover">
+                </div>
             </div>
 
         </div>
     </main>
+
+    <script>
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Animate rows as you scroll
+        gsap.utils.toArray('.step-row').forEach(row => {
+            gsap.from(row, {
+                y: 50, opacity: 0, duration: 1, ease: "power3.out",
+                scrollTrigger: { trigger: row, start: "top 80%" }
+            });
+        });
+    </script>
 </body>
 </html>
