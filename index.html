@@ -462,14 +462,37 @@
 
             } catch (err) {
                 console.error(err);
-                if (err.code === "ACTION_REJECTED" || err.message.includes("rejected")) {
+                
+                // 1. Check if User Rejected (cancelled) the transaction
+                if (err.code === "ACTION_REJECTED" || err.code === 4001 || (err.message && err.message.includes("rejected"))) {
                     statusMsg.innerText = "Transaction Cancelled.";
-                } else {
-                    statusMsg.innerText = "Error: " + (err.message || "Failed");
+                    statusMsg.className = "font-mono text-sm text-center mb-6 text-yellow-400";
+                    actionBtn.innerText = "Try Again";
+                } 
+                // 2. Check if Contract is Out of Funds
+                else if (err.message && (err.message.includes("out of funds") || err.message.includes("insufficient"))) {
+                    statusMsg.innerText = "⚠️ Reward Pool Empty. Please contact admin.";
+                    statusMsg.className = "font-mono text-sm text-center mb-6 text-orange-500";
+                    actionBtn.innerText = "Pool Empty";
                 }
-                statusMsg.className = "font-mono text-sm text-center mb-6 text-red-500";
+                // 3. ✅ NEW: Check if User Already Claimed (Positive Message)
+                else if (err.message && err.message.includes("already claimed")) {
+                    statusMsg.innerHTML = `
+                        <span class="block text-green-400 font-bold text-lg mb-1">You are already an Eco-Hero!</span>
+                        You have already claimed the reward for this wallet. Thank you for your continued support! 🌿
+                    `;
+                    statusMsg.className = "font-mono text-sm text-center mb-6 text-green-400";
+                    actionBtn.innerText = "Already Claimed";
+                    actionBtn.classList.add("bg-green-900", "text-green-300", "border-green-700");
+                }
+                // 4. Other Errors
+                else {
+                    statusMsg.innerText = "Error: " + (err.reason || err.message || "Failed");
+                    statusMsg.className = "font-mono text-sm text-center mb-6 text-red-500";
+                    actionBtn.innerText = "Try Again";
+                }
+                
                 actionBtn.disabled = false;
-                actionBtn.innerText = "Try Again";
             }
         });
 
