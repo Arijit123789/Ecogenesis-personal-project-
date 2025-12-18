@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoGenesis | Planting Guide</title>
+    <link rel="icon" href="https://fav.farm/🌱" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;800&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --neon-green: #00ff88; --deep-space: #050505; }
+        body { background: var(--deep-space); color: white; font-family: 'SF Pro Display', sans-serif; overflow-x: hidden; }
+        header { position: fixed; top: 0; width: 100%; z-index: 100; background: rgba(5,5,5,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .step-card { border-left: 1px solid rgba(255,255,255,0.2); padding-left: 2rem; position: relative; }
+        .step-number { position: absolute; left: -1.25rem; top: 0; width: 2.5rem; height: 2.5rem; background: var(--neon-green); color: black; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="text-2xl font-bold flex items-center gap-2 text-white hover:text-green-400 transition">
+                <span>🌍</span> EcoGenesis
+            </a>
+            <nav class="hidden md:flex gap-6 text-sm font-medium text-gray-400">
+                <a href="/" class="hover:text-white transition">Home</a>
+                <a href="/wildlife" class="hover:text-white transition">Legacy</a>
+                <a href="/guide" class="text-white">Planting Guide</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-20">
+        <div class="container mx-auto px-6 max-w-3xl">
+            
+            <div class="text-center mb-20">
+                <span class="text-green-400 font-mono tracking-widest text-sm uppercase">Field Manual</span>
+                <h1 class="text-5xl md:text-7xl font-bold mt-4 mb-6">The Art of Planting.</h1>
+                <p class="text-xl text-gray-400">Planting a tree is an act of hope. Do it correctly, and your impact will last for centuries.</p>
+            </div>
+
+            <div class="space-y-24">
+                
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3 class="text-3xl font-bold mb-4">Choose the Right Spot</h3>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                        Trees need space. Look up for power lines and down for pipes. Ensure the soil drains well and the spot gets adequate sunlight for the species you chose.
+                    </p>
+                    <img src="https://images.unsplash.com/photo-1598556776374-227366eb9942?q=80&w=1000&auto=format&fit=crop" class="w-full rounded-2xl opacity-80 border border-white/10">
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3 class="text-3xl font-bold mb-4">Dig the Hole</h3>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                        Dig a hole 2 to 3 times wider than the root ball, but no deeper. The "flare" (where roots meet trunk) should be slightly visible above ground level.
+                    </p>
+                    <img src="https://images.unsplash.com/photo-1615579979929-373887c7847c?q=80&w=1000&auto=format&fit=crop" class="w-full rounded-2xl opacity-80 border border-white/10">
+                </div>
+
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3 class="text-3xl font-bold mb-4">Plant & Verify</h3>
+                    <p class="text-gray-400 text-lg leading-relaxed mb-6">
+                        Place the tree gently. Backfill with native soil. Water immediately. <br><br>
+                        <strong class="text-white">Crucial Step:</strong> Take a photo of your newly planted tree and upload it to EcoGenesis to claim your reward.
+                    </p>
+                    <a href="/#upload" class="inline-block mt-4 px-8 py-3 bg-green-500 text-black font-bold rounded-full hover:bg-green-400 transition">
+                        I'm Ready to Plant
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const lenis = new Lenis();
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+        
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.utils.toArray('.step-card').forEach(step => {
+            gsap.from(step, {
+                opacity: 0, x: -20, duration: 1, ease: "power3.out",
+                scrollTrigger: { trigger: step, start: "top 80%" }
+            });
+        });
+    </script>
+</body>
+</html>
