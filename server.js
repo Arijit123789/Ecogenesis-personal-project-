@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
-const path = require('path'); // <--- New import for file paths
+const path = require('path');
 const { ethers } = require('ethers');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
@@ -14,28 +14,28 @@ app.use(express.json());
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// Setup Gemini & Wallet
+// Setup Gemini (Use the API Key from Environment Variables)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const backendWallet = new ethers.Wallet(process.env.BACKEND_PRIVATE_KEY);
 
-// --- NEW CODE: Serve the Website ---
-// 1. Serve static files (css, js, images) if you have any
+// Serve Frontend
 app.use(express.static(path.join(__dirname, '.')));
 
-// 2. The Root Route: Show index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// 3. Your Existing Verify Route
+// Verify Route
 app.post('/verify-planting', upload.single('image'), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ success: false, message: "No image uploaded" });
-        
-        const userAddress = req.body.address;
-        if (!userAddress) return res.status(400).json({ success: false, message: "No wallet address provided" });
+        if (!req.body.address) return res.status(400).json({ success: false, message: "No wallet address" });
 
+        const userAddress = req.body.address;
+
+        // --- FIXED: Use gemini-1.5-flash (Works with new library version) ---
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        
         const prompt = "Analyze this image. Is it a real photo of a newly planted tree, sapling, or gardening activity? If yes, answer strictly with 'YES'. If it is fake, a drawing, or irrelevant, answer 'NO'.";
         
         const imagePart = {
@@ -70,6 +70,7 @@ app.post('/verify-planting', upload.single('image'), async (req, res) => {
 
     } catch (error) {
         console.error("Error:", error);
+        // Return actual error message for debugging
         res.status(500).json({ success: false, message: error.message });
     }
 });
