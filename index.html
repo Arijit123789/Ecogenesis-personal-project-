@@ -12,12 +12,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/globe.gl"></script> <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;800&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/globe.gl"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;600;800&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
             --neon-green: #00ff88;
-            --alert-red: #ff4b4b;
+            --neon-blue: #00ccff;
             --deep-space: #020202;
             --glass-border: rgba(255, 255, 255, 0.08);
             --glass-bg: rgba(20, 20, 20, 0.4);
@@ -40,13 +42,7 @@
             border-bottom: 1px solid var(--glass-border);
         }
 
-        /* Text Effects */
-        .text-neon {
-            color: var(--neon-green);
-            text-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
-        }
-
-        /* Glass Cards */
+        /* Glass Panels */
         .glass-panel {
             background: var(--glass-bg);
             backdrop-filter: blur(40px);
@@ -62,7 +58,7 @@
         .marquee-content { display: inline-block; animation: marquee 30s linear infinite; }
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-        /* Scanner */
+        /* Scanner Zone */
         .scanner-zone {
             border: 2px dashed rgba(255, 255, 255, 0.15);
             background: radial-gradient(circle at center, rgba(0, 255, 136, 0.02) 0%, transparent 70%);
@@ -88,12 +84,15 @@
         }
         .btn-disconnect:hover { background: rgba(255, 75, 75, 0.2); }
 
+        /* Live Feed Animation */
+        .feed-item {
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-        
-        /* Globe Container */
-        #globe-viz { width: 100%; height: 600px; }
     </style>
 </head>
 <body>
@@ -106,8 +105,8 @@
             </div>
             <nav class="hidden md:flex gap-8 text-sm font-medium text-gray-400">
                 <a href="#mission" class="hover:text-white transition">The Crisis</a>
-                <a href="#map-section" class="hover:text-white transition text-neon">Live Map</a>
-                <a href="#upload" class="hover:text-white transition">Plant Now</a>
+                <a href="#map-section" class="hover:text-white transition text-neon">Live Intel</a>
+                <a href="#donate" class="hover:text-white transition">Fund the Mission</a>
             </nav>
             <div class="flex items-center">
                 <button id="header-connect-btn" class="border border-white/20 text-white hover:border-green-400 hover:text-green-400 px-5 py-2 rounded-full transition text-sm flex items-center gap-2">
@@ -153,30 +152,53 @@
                     
                     <div>
                         <p class="text-neon font-mono text-sm tracking-[0.3em] mb-4">LIVE ACTIVITY FEED</p>
-                        <h2 class="text-5xl font-bold mb-6">Global Reforestation Tracker</h2>
+                        <h2 class="text-5xl font-bold mb-6">Global Neural Network</h2>
                         <div class="text-[5rem] font-bold leading-none text-white tabular-nums tracking-tighter mb-4" id="tree-counter">
                             0
                         </div>
                         <p class="text-xl text-gray-500 mb-8">Verified Regenerations on Chain</p>
                         
-                        <div class="glass-panel p-6 max-w-sm">
-                            <div class="flex items-center gap-4 mb-4">
-                                <div class="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-                                <span class="font-mono text-sm text-green-400">NEW BLOCK MINED</span>
+                        <div class="glass-panel p-6 max-w-md h-64 overflow-hidden relative">
+                            <div class="flex items-center justify-between mb-4 border-b border-white/10 pb-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                                    <span class="font-mono text-xs text-green-400 tracking-wider">BLOCKCHAIN LIVE FEED</span>
+                                </div>
+                                <span class="text-xs text-gray-500">SEPOLIA</span>
                             </div>
-                            <p class="text-xs text-gray-400 font-mono">
-                                0x3f...e21a planted 1 Oak in Brazil<br>
-                                0x8a...b91c planted 2 Pines in Norway<br>
-                                0x1c...d44f planted 1 Bamboo in India
-                            </p>
+                            <div class="space-y-4" id="tx-feed">
+                                </div>
+                            <div class="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-[#141414] to-transparent"></div>
                         </div>
                     </div>
 
                     <div class="h-[600px] w-full relative" id="globe-container">
                         <div id="globe-viz" class="absolute inset-0"></div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#020202] via-transparent to-transparent pointer-events-none"></div>
                     </div>
 
+                </div>
+            </div>
+        </section>
+
+        <section id="donate" class="py-20 bg-[#020202] border-t border-white/5">
+            <div class="container mx-auto px-6 max-w-4xl text-center">
+                <span class="text-neon font-mono text-sm tracking-[0.3em] mb-4 block">SUSTAIN THE PROTOCOL</span>
+                <h2 class="text-4xl md:text-6xl font-bold mb-6">Fund the Regeneration.</h2>
+                <p class="text-gray-400 mb-10 text-lg">
+                    Directly top up the Reward Pool. 100% of funds go to verified planters.
+                </p>
+                
+                <div class="glass-panel p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden group">
+                    <div class="absolute -left-20 top-0 w-40 h-full bg-green-500/10 blur-2xl group-hover:bg-green-500/20 transition"></div>
+                    
+                    <div class="text-left z-10">
+                        <p class="text-xs text-gray-500 font-mono uppercase mb-1">Contract Address (Sepolia)</p>
+                        <p class="text-xl md:text-2xl font-mono text-white break-all" id="contract-address">0xc329a783119e8b4219098c96493eb6783009601e</p>
+                    </div>
+                    <button onclick="copyAddress()" class="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition z-10 border border-white/10">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                        Copy
+                    </button>
                 </div>
             </div>
         </section>
@@ -227,47 +249,69 @@
         const BACKEND_URL = "/verify-planting";
         const CONTRACT_ABI = ["function claimReward(bytes memory signature) external"];
 
-        // --- 1. 3D GLOBE INITIALIZATION (THE MAGIC) ---
+        // --- 1. BILLION DOLLAR GLOBE (Restored) ---
         const globeContainer = document.getElementById('globe-viz');
         
-        // Generate random "planting" data points to simulate live activity
-        const N = 40;
-        const gData = [...Array(N).keys()].map(() => ({
-            lat: (Math.random() - 0.5) * 180,
-            lng: (Math.random() - 0.5) * 360,
-            size: Math.random() / 3,
-            color: '#00ff88'
+        // Data Arcs configuration
+        const arcsData = [...Array(20).keys()].map(() => ({
+            startLat: (Math.random() - 0.5) * 180,
+            startLng: (Math.random() - 0.5) * 360,
+            endLat: (Math.random() - 0.5) * 180,
+            endLng: (Math.random() - 0.5) * 360,
+            color: [['#00ff88', '#00ccff'][Math.round(Math.random())]]
         }));
 
         const world = Globe()
-            .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+            .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+            .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
             .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
-            .pointsData(gData)
-            .pointAltitude('size')
-            .pointColor('color')
-            .pointRadius(0.5)
-            .pointsMerge(true) // Performance
-            .atmosphereColor('#00ff88')
-            .atmosphereAltitude(0.15)
+            .arcsData(arcsData)
+            .arcColor('color')
+            .arcDashLength(0.4)
+            .arcDashGap(2)
+            .arcDashInitialGap(() => Math.random())
+            .arcDashAnimateTime(4000)
+            .atmosphereColor('#00ccff')
+            .atmosphereAltitude(0.2)
             (globeContainer);
 
-        // Auto-rotate
         world.controls().autoRotate = true;
-        world.controls().autoRotateSpeed = 0.6;
-        
-        // Add random "New Plants" periodically
-        setInterval(() => {
-            const newPoint = {
-                lat: (Math.random() - 0.5) * 180,
-                lng: (Math.random() - 0.5) * 360,
-                size: Math.random(),
-                color: '#ffffff' // Flash white then turn green
-            };
-            const currentData = world.pointsData();
-            world.pointsData([...currentData, newPoint]);
-        }, 2000); // New tree every 2 seconds
+        world.controls().autoRotateSpeed = 0.5;
+        world.controls().enableZoom = false;
 
-        // --- 2. GSAP ANIMATIONS ---
+        // --- 2. LIVE TRANSACTION FEED LOGIC ---
+        const feedContainer = document.getElementById('tx-feed');
+        const locations = ["Brazil", "India", "Norway", "Kenya", "USA", "Indonesia"];
+        
+        function addLiveTx() {
+            const randomAddr = "0x" + Math.random().toString(16).substr(2, 4) + "..." + Math.random().toString(16).substr(2, 4);
+            const randomLoc = locations[Math.floor(Math.random() * locations.length)];
+            
+            const div = document.createElement('div');
+            div.className = "flex justify-between items-center feed-item border-b border-white/5 pb-2";
+            div.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[10px]">👤</div>
+                    <div>
+                        <div class="text-sm font-mono text-white">${randomAddr}</div>
+                        <div class="text-xs text-gray-500">Minted Reward</div>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-neon text-sm font-bold">+0.01 ETH</div>
+                    <div class="text-xs text-gray-500">${randomLoc}</div>
+                </div>
+            `;
+            
+            feedContainer.prepend(div);
+            if (feedContainer.children.length > 4) feedContainer.lastElementChild.remove();
+        }
+        
+        // Start the simulation loop
+        setInterval(addLiveTx, 3500);
+        addLiveTx(); // Initial
+
+        // --- 3. ANIMATIONS & COPY ---
         const lenis = new Lenis();
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
@@ -276,12 +320,15 @@
         gsap.to("#hero-bg", { scrollTrigger: { trigger: "header", start: "top top", end: "bottom top", scrub: true }, scale: 1.2, opacity: 0.2 });
         gsap.to(".hero-text", { y: 0, opacity: 1, duration: 1.2, stagger: 0.15, ease: "power3.out", delay: 0.2 });
 
-        // Counter Logic
         let baseCount = 1428;
-        const counterEl = document.getElementById("tree-counter");
-        gsap.to(counterEl, { innerText: baseCount, snap: { innerText: 1 }, duration: 2.5, ease: "power2.out", scrollTrigger: { trigger: "#map-section", start: "top 85%" } });
+        gsap.to("#tree-counter", { innerText: baseCount, snap: { innerText: 1 }, duration: 2.5, ease: "power2.out", scrollTrigger: { trigger: "#map-section", start: "top 85%" } });
 
-        // --- 3. WALLET & UPLOAD LOGIC ---
+        function copyAddress() {
+            navigator.clipboard.writeText(document.getElementById('contract-address').innerText);
+            alert("Address Copied to Clipboard!");
+        }
+
+        // --- 4. WALLET & UPLOAD LOGIC ---
         let provider, signer, userAddress;
         const walletBtn = document.getElementById('header-connect-btn');
         const disconnectBtn = document.getElementById('disconnect-btn');
@@ -372,10 +419,10 @@
                 statusMsg.innerHTML = "🌱 REWARD MINTED: 0.01 ETH";
                 actionBtn.innerText = "Impact Recorded";
                 
-                // Add new point to globe immediately!
-                world.pointsData([...world.pointsData(), { lat: 20, lng: 77, size: 1.5, color: 'white' }]); 
+                // Live Feed Update (Visual Trick)
+                addLiveTx();
                 baseCount++;
-                gsap.to(counterEl, { innerText: baseCount, snap: { innerText: 1 }, duration: 1, ease: "circ.out" });
+                gsap.to("#tree-counter", { innerText: baseCount, snap: { innerText: 1 }, duration: 1, ease: "circ.out" });
 
             } catch (err) {
                 console.error(err);
