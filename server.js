@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
+const path = require('path'); // <--- New import for file paths
 const { ethers } = require('ethers');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
@@ -9,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// --- Vercel Config: Use Memory Storage ---
+// --- Vercel Config ---
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -17,6 +18,16 @@ const upload = multer({ storage: storage });
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const backendWallet = new ethers.Wallet(process.env.BACKEND_PRIVATE_KEY);
 
+// --- NEW CODE: Serve the Website ---
+// 1. Serve static files (css, js, images) if you have any
+app.use(express.static(path.join(__dirname, '.')));
+
+// 2. The Root Route: Show index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// 3. Your Existing Verify Route
 app.post('/verify-planting', upload.single('image'), async (req, res) => {
     try {
         if (!req.file) return res.status(400).json({ success: false, message: "No image uploaded" });
@@ -24,11 +35,9 @@ app.post('/verify-planting', upload.single('image'), async (req, res) => {
         const userAddress = req.body.address;
         if (!userAddress) return res.status(400).json({ success: false, message: "No wallet address provided" });
 
-        // Ask Gemini to verify
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const prompt = "Analyze this image. Is it a real photo of a newly planted tree, sapling, or gardening activity? If yes, answer strictly with 'YES'. If it is fake, a drawing, or irrelevant, answer 'NO'.";
         
-        // Convert buffer for Gemini
         const imagePart = {
             inlineData: {
                 data: req.file.buffer.toString("base64"),
@@ -39,10 +48,7 @@ app.post('/verify-planting', upload.single('image'), async (req, res) => {
         const result = await model.generateContent([prompt, imagePart]);
         const responseText = result.response.text().trim().toUpperCase();
 
-        console.log(`User: ${userAddress} | Result: ${responseText}`);
-
         if (responseText.includes("YES")) {
-            // Sign the reward (User + 0.01 ETH)
             const amount = ethers.parseEther("0.01"); 
             const messageHash = ethers.solidityPackedKeccak256(
                 ["address", "uint256"], 
@@ -68,5 +74,4 @@ app.post('/verify-planting', upload.single('image'), async (req, res) => {
     }
 });
 
-// --- Export for Vercel ---
 module.exports = app;
