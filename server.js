@@ -34,7 +34,7 @@ app.post('/verify-planting', upload.single('image'), async (req, res) => {
         const userAddress = req.body.address;
 
         // --- FIXED: Use gemini-1.5-flash (Works with new library version) ---
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-001" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
         
         const prompt = "Analyze this image. Is it a real photo of a newly planted tree, sapling, or gardening activity? If yes, answer strictly with 'YES'. If it is fake, a drawing, or irrelevant, answer 'NO'.";
         
