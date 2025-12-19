@@ -31,7 +31,7 @@ app.post('/verify-planting', upload.single('image'), async (req, res) => {
         if (!req.body.address) return res.status(400).json({ success: false, message: "No wallet address" });
 
         const userAddress = req.body.address;
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
         const prompt = "Analyze this image. Is it a real photo of a newly planted tree, sapling, or gardening activity? If yes, answer strictly with 'YES'. If it is fake, a drawing, or irrelevant, answer 'NO'.";
         
         const imagePart = {
