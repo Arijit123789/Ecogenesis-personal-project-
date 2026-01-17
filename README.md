@@ -52,6 +52,23 @@ EcoGenesis is a Decentralized Physical Infrastructure Network (DePIN) designed t
     ```
     The app will run at `http://localhost:3000` (or your configured port).
 
+## 📜 Smart Contract Details
+
+The EcoGenesis protocol is currently deployed on the **Ethereum Sepolia Testnet**.
+
+* **Contract Address:** `0xc329a783119e8b4219098c96493eb6783009601e`
+* **Network:** Sepolia (Chain ID: 11155111)
+
+### **How to Update the Contract**
+If you deploy your own version of the Smart Contract, you must update the frontend to interact with your new address.
+
+1.  Open `index.html`.
+2.  Locate the `CONTRACT_ADDRESS` constant (approx. line 360).
+3.  Replace the string with your new contract address:
+    ```javascript
+    const CONTRACT_ADDRESS = "YOUR_NEW_CONTRACT_ADDRESS_HERE";
+    ```
+
 ## 📖 How It Works
 
 1.  **Connect Wallet:** Users connect their MetaMask wallet on the homepage.
